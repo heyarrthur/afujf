@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Eventos • AFUJF</title>
+  <meta name="theme-color" content="#0068A9"/>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --grad-a:#008B5C; --grad-b:#0068A9;
+      --white:#FFF; --black:#353535;
+      --success:#009420; --error:#D00000;
+      --radius:18px;
+      --shadow-sm:0 6px 14px rgba(0,0,0,.08);
+      --shadow-md:0 14px 28px rgba(0,0,0,.12), 0 6px 14px rgba(0,0,0,.08);
+      --shadow-lg:0 28px 60px rgba(0,0,0,.16), 0 12px 24px rgba(0,0,0,.10);
+    }
+
+    body{
+      margin:0; color:var(--black);
+      background:
+        radial-gradient(55% 70% at 10% -10%, rgba(0,139,92,.12), transparent 60%),
+        radial-gradient(45% 60% at 120% 10%, rgba(0,104,169,.12), transparent 60%),
+        linear-gradient(#f7fafc, #edf2f7);
+      min-height:100vh; overflow-x:hidden;
+    }
+
+    /* === Botão/logo fixo (borda embaixo/direita) === */
+    .brand-square{
+      position: fixed; top:0; left:0; width:64px; height:64px; padding:0; border:0;
+      background:#0b0b0b; border-radius:0 0 var(--radius) 0; overflow:hidden; z-index:1100;
+      box-shadow: 10px 16px 24px rgba(0,0,0,.28);
+    }
+    .brand-square img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .brand-square::after{
+      content:""; position:absolute; inset:0;
+      border:2px solid rgba(255,255,255,.14); border-top:0; border-left:0;
+      border-bottom-right-radius:var(--radius); pointer-events:none;
+      box-shadow: 6px 10px 18px rgba(0,0,0,.25);
+    }
+
+    /* === HERO === */
+    .page-hero{
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      color:#fff; padding: 88px 0 42px; position:relative; overflow:hidden;
+      box-shadow: inset 0 -30px 60px rgba(0,0,0,.14);
+    }
+    .page-hero::before, .page-hero::after{
+      content:""; position:absolute; border-radius:50%; filter: blur(2px); opacity:.22; pointer-events:none;
+    }
+    .page-hero::before{ width:420px; height:420px; left:-12%; top:-22%; background: radial-gradient(closest-side,#00b07a,transparent 70%); }
+    .page-hero::after { width:520px; height:520px; right:-18%; bottom:-28%; background: radial-gradient(closest-side,#0b86d0,transparent 70%); }
+    .hero-sep{ height:10px; background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,0)); mask: linear-gradient(#000, transparent); }
+
+    /* === CONTROLES (sticky + glass) === */
+    .controls{ margin-top:-20px; }
+    .filter-card{
+      background: rgba(255,255,255,.8); border:0; border-radius:18px; box-shadow: var(--shadow-md);
+      backdrop-filter: blur(8px);
+      position: sticky; top: 16px; z-index: 20;
+    }
+    .input-group:focus-within{ box-shadow: 0 0 0 .2rem rgba(0,104,169,.15); border-radius: 10px; }
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .65rem;
+      border-radius:999px; background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.06);
+      font-size:.9rem;
+    }
+
+    /* === GRID DE EVENTOS === */
+    .event-card{
+      position:relative; border:0; border-radius:18px; background:#fff; box-shadow: var(--shadow-md);
+      overflow:hidden; height:100%;
+      transition: transform .2s ease, box-shadow .25s ease, filter .2s ease;
+    }
+    .event-card:hover{ transform: translateY(-4px); box-shadow: var(--shadow-lg); filter: brightness(1.01); }
+    .event-card::before{
+      content:""; position:absolute; inset:-1px; border-radius:20px; padding:1px;
+      background: linear-gradient(120deg, rgba(0,139,92,.28), rgba(0,104,169,.28), rgba(255,255,255,.28));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
+      animation: hue 8s linear infinite;
+    }
+    @keyframes hue{ 0%{ filter:hue-rotate(0deg)} 100%{filter:hue-rotate(360deg)} }
+
+    .banner{
+      height:180px; position:relative; overflow:hidden; background:linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      display:flex; align-items:center; justify-content:center;
+    }
+    .banner img{ width:100%; height:100%; object-fit: cover; filter: saturate(1.05) contrast(1.02); }
+    .banner::after{
+      content:""; position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.05));
+    }
+    .date-pill{
+      position:absolute; left:14px; bottom:14px; z-index:2;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      width:64px; height:64px; border-radius:14px; color:#fff;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      box-shadow: var(--shadow-sm);
+      text-shadow: 0 1px 2px rgba(0,0,0,.3);
+      font-weight:800;
+    }
+    .date-pill .day{ font-size:1.25rem; line-height:1; }
+    .date-pill .mon{ font-size:.8rem; opacity:.9; text-transform: uppercase; }
+
+    .badge-free{ background: rgba(0,148,32,.1); color:var(--success); border-radius:10px; padding:.25rem .55rem; font-weight:700; }
+    .badge-paid{ background: rgba(208,0,0,.1); color:var(--error); border-radius:10px; padding:.25rem .55rem; font-weight:700; }
+    .tag{ display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .55rem; border-radius:999px; background:rgba(0,0,0,.05); font-size:.8rem; }
+
+    .btn-gradient{
+      color:#fff; border:none; border-radius:12px;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      box-shadow: var(--shadow-sm);
+      transition: transform .08s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .btn-gradient:hover{ transform: translateY(-1px); box-shadow: var(--shadow-md); filter: brightness(1.03); }
+
+    /* Skeleton */
+    .skeleton .sk{ background: #e9ecef; border-radius:10px; position:relative; overflow:hidden; }
+    .skeleton .sk::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0));
+      transform: translateX(-100%); animation: shine 1.2s infinite;
+    }
+    @keyframes shine{ 100%{ transform: translateX(100%) } }
+
+    /* Reveal */
+    .reveal{ opacity:0; transform: translateY(14px) scale(.98); }
+    .reveal.in{ opacity:1; transform:none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1.05); }
+
+    /* Offcanvas */
+    .offcanvas{
+      --bs-offcanvas-width: 320px;
+      background: linear-gradient(135deg, rgba(0,139,92,.98), rgba(0,104,169,.98));
+      color:#fff; backdrop-filter: blur(8px);
+    }
+    .menu-logo{ width:36px; height:36px; object-fit:cover; border-radius:8px; }
+    .menu-link{ display:flex; align-items:center; gap:.65rem; padding:.8rem 1rem; border-radius:12px; color:#fff; text-decoration:none; }
+    .menu-link:hover{ background: rgba(255,255,255,.10) }
+  </style>
+</head>
+<body>
+
+  <!-- Botão/menu -->
+  <button class="brand-square" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-label="Abrir menu">
+    <img src="afujf.png" alt="AFUJF">
+  </button>
+
+  <!-- MENU Offcanvas -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="mainMenu" aria-labelledby="mainMenuLabel">
+    <div class="offcanvas-header">
+      <div class="d-flex align-items-center gap-2">
+        <img class="menu-logo" src="afujf.png" alt="AFUJF">
+        <h5 class="mb-0 fw-semibold" id="mainMenuLabel">AFUJF</h5>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="mb-2 small opacity-75">Navegação</div>
+      <ul class="list-unstyled vstack gap-1">
+        <li><a class="menu-link" href="dashboard.html"><i class="bi bi-house"></i>Dashboard</a></li>
+        <li><a class="menu-link" href="carteirinha.html"><i class="bi bi-person-badge"></i>Minha carteirinha</a></li>
+        <li><a class="menu-link" href="convenios.html"><i class="bi bi-bag-heart"></i>Convênios AFUJF</a></li>
+        <li><a class="menu-link" href="eventos.html"><i class="bi bi-calendar-event"></i>Eventos</a></li>
+        <li id="link-associados" class="d-none"><a class="menu-link" href="associados.html"><i class="bi bi-people-gear"></i>Associados (Admin)</a></li>
+      </ul>
+      <hr class="border-light opacity-50 my-4">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="small opacity-75">Usuário</div>
+          <div id="userLabel" class="fw-semibold">Visitante</div>
+        </div>
+        <div class="d-flex gap-2">
+          <a id="btnLogin" href="login.html" class="btn btn-outline-light btn-sm">Entrar</a>
+          <button id="btnLogout" class="btn btn-outline-light btn-sm d-none">Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="page-hero">
+    <div class="container">
+      <h1 class="display-6 fw-bold mb-1">Eventos</h1>
+      <div class="opacity-75">Fique por dentro dos próximos eventos da AFUJF</div>
+    </div>
+    <div class="hero-sep"></div>
+  </header>
+
+  <!-- CONTROLES -->
+  <section class="controls">
+    <div class="container">
+      <div class="card filter-card p-3 p-md-4 reveal">
+        <div class="row g-2 g-md-3 align-items-center">
+          <div class="col-12 col-md-5">
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+              <input id="q" type="search" class="form-control" placeholder="Buscar evento (título, local, categoria)..." autocomplete="off">
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <select id="cat" class="form-select">
+              <option value="">Todas as categorias</option>
+              <!-- categorias via JS -->
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <select id="month" class="form-select">
+              <option value="">Todos os meses</option>
+              <!-- meses via JS -->
+            </select>
+          </div>
+          <div class="col-12 col-md-2 d-flex align-items-center justify-content-between justify-content-md-end gap-2">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="onlyUpcoming" checked>
+              <label class="form-check-label" for="onlyUpcoming">Somente futuros</label>
+            </div>
+          </div>
+        </div>
+        <div class="row g-2 g-md-3 mt-2 align-items-center">
+          <div class="col-12 col-md-3">
+            <select id="sort" class="form-select">
+              <option value="nearest">Ordenar por: Mais próximos</option>
+              <option value="az">A–Z</option>
+              <option value="recent">Mais recentes (criados)</option>
+            </select>
+          </div>
+          <div class="col-12 col-md d-flex align-items-center gap-2 mt-2 mt-md-0">
+            <span id="count" class="chip"><i class="bi bi-grid-3x3-gap"></i> <span id="countNum">0</span> eventos</span>
+            <span id="activeFilter" class="chip d-none"><i class="bi bi-funnel"></i> <span id="activeFilterText"></span></span>
+            <button id="clearFilters" class="btn btn-outline-secondary btn-sm ms-auto">Limpar filtros</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTA DE EVENTOS -->
+  <section class="py-4">
+    <div class="container">
+      <!-- Skeleton inicial -->
+      <div id="skeleton" class="row g-3 g-lg-4 skeleton">
+        <template id="sk-template">
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="event-card">
+              <div class="sk" style="height:180px;"></div>
+              <div class="p-3">
+                <div class="sk" style="height:18px; width:70%; margin-bottom:8px;"></div>
+                <div class="sk" style="height:12px; width:90%; margin-bottom:6px;"></div>
+                <div class="sk" style="height:12px; width:60%; margin-bottom:14px;"></div>
+                <div class="sk" style="height:34px; width:100%;"></div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div id="grid" class="row g-3 g-lg-4 reveal d-none"><!-- cards via JS --></div>
+
+      <div id="emptyState" class="alert alert-light border d-none mt-3">
+        Nenhum evento encontrado para os filtros aplicados.
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DETALHES -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="border:0;border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;">
+        <div class="modal-header" style="background:linear-gradient(135deg, var(--grad-a), var(--grad-b)); color:#fff;">
+          <h5 class="modal-title" id="evTitle">Evento</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex flex-column flex-md-row gap-3 mb-3">
+            <div class="banner" style="width:100%;max-width:420px;height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,.06);">
+              <img id="evImg" alt="">
+            </div>
+            <div class="vstack gap-2 flex-grow-1">
+              <div><i class="bi bi-calendar3 me-1"></i> <span id="evWhen"></span></div>
+              <div><i class="bi bi-geo-alt me-1"></i> <span id="evWhere"></span></div>
+              <div><i class="bi bi-tags me-1"></i> <span id="evCat"></span></div>
+              <div id="evPriceWrap"></div>
+              <div class="d-flex gap-2 mt-1">
+                <a id="evLink" href="#" target="_blank" class="btn btn-gradient btn-sm">Inscrever-se</a>
+                <a id="evIcs" download class="btn btn-outline-secondary btn-sm">Adicionar ao calendário</a>
+              </div>
+            </div>
+          </div>
+          <p id="evDesc" class="mb-0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* ===== Sessão / Navbar ===== */
+    function getSession(){ try{ return JSON.parse(localStorage.getItem("session")) || null }catch{ return null } }
+    const session = getSession();
+    const isAdmin = !!session && session.role === "admin";
+    const userLabel = document.getElementById("userLabel");
+    const btnLogin = document.getElementById("btnLogin");
+    const btnLogout = document.getElementById("btnLogout");
+    const linkAssociados = document.getElementById("link-associados");
+    if(session){ userLabel.textContent = session.matricula ? `Matrícula ${session.matricula}` : (session.email || "Usuário"); btnLogin?.classList.add("d-none"); btnLogout?.classList.remove("d-none"); }
+    if(isAdmin){ linkAssociados?.classList.remove("d-none"); }
+    btnLogout?.addEventListener("click", () => { localStorage.removeItem("session"); window.location.href = "login.html"; });
+
+    /* ===== Util ===== */
+    const MONTHS = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    function pad2(n){ return String(n).padStart(2,'0'); }
+    function slug(s){ return (s||"").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+    function toISO(d){ return new Date(d).toISOString(); }
+    function fmtWhen(s,e){
+      const sd = new Date(s), ed = e ? new Date(e) : null;
+      const sameDay = ed && sd.toDateString() === ed.toDateString();
+      const d1 = `${pad2(sd.getDate())}/${pad2(sd.getMonth()+1)}/${sd.getFullYear()}`;
+      const t1 = `${pad2(sd.getHours())}:${pad2(sd.getMinutes())}`;
+      if(!ed){ return `${d1} • ${t1}`; }
+      const d2 = `${pad2(ed.getDate())}/${pad2(ed.getMonth()+1)}/${ed.getFullYear()}`;
+      const t2 = `${pad2(ed.getHours())}:${pad2(ed.getMinutes())}`;
+      return sameDay ? `${d1} • ${t1}–${t2}` : `${d1} ${t1} → ${d2} ${t2}`;
+    }
+    function icsFor(ev){
+      const dt = s => {
+        const d = new Date(s);
+        return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
+      };
+      const uid = `${ev.id}@afujf`;
+      const body = [
+        'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AFUJF//Eventos//PT-BR',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${dt(new Date())}`,
+        `DTSTART:${dt(ev.start)}`,
+        ev.end ? `DTEND:${dt(ev.end)}` : '',
+        `SUMMARY:${ev.title}`,
+        ev.location ? `LOCATION:${ev.location}` : '',
+        ev.description ? `DESCRIPTION:${ev.description.replace(/\n/g,' ')}` : '',
+        'END:VEVENT','END:VCALENDAR'
+      ].filter(Boolean).join('\r\n');
+      return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body);
+    }
+
+    /* ===== Dados (localStorage ou seed) ===== */
+    function getEvents(){
+      try{
+        const local = JSON.parse(localStorage.getItem("eventos"));
+        if(Array.isArray(local) && local.length){
+          return local.map(x => ({
+            id: x.id || slug(x.title),
+            title: x.title || 'Evento',
+            start: x.start || x.dateStart || toISO(new Date()),
+            end: x.end || x.dateEnd || null,
+            location: x.location || '',
+            category: x.category || 'Geral',
+            banner: x.banner || x.img || null,
+            description: x.description || 'Evento da AFUJF.',
+            link: x.link || '#',
+            price: x.price ?? 0,
+            createdAt: x.createdAt || new Date().toISOString()
+          }));
+        }
+      }catch{}
+      // SEED de exemplo
+      const now = new Date();
+      const mk = (offsetDays, hours, title, cat, banner, loc, price=0, durHrs=2) => {
+        const s = new Date(now); s.setDate(s.getDate()+offsetDays); s.setHours(hours,0,0,0);
+        const e = new Date(s); e.setHours(e.getHours()+durHrs);
+        return { id: slug(title), title, start: s.toISOString(), end: e.toISOString(), category: cat, banner, location: loc, description: 'Descrição do evento e informações gerais.', link:'#', price, createdAt: new Date().toISOString() };
+      };
+      return [
+        mk(3, 19, 'Noite de Integração dos Associados', 'Social', null, 'Sede AFUJF', 0),
+        mk(10, 8, 'Check-up em Dia', 'Saúde', null, 'Clínica Bem-Estar', 0),
+        mk(15, 7, 'Corrida Solidária AFUJF', 'Esportes', null, 'Parque Municipal', 20),
+        mk(-12, 18, 'Workshop Finanças Pessoais', 'Educação', null, 'Auditório Unimed', 0),
+        mk(30, 9, 'Campanha de Vacinação', 'Saúde', null, 'Laboratório Alfa', 0),
+        mk(45, 20, 'Jantar de Confraternização', 'Social', null, 'Restaurante Sabor', 120),
+      ];
+    }
+
+    /* ===== Estado/elementos ===== */
+    const state = { all: getEvents(), filtered: [] };
+    const grid = document.getElementById('grid');
+    const skeleton = document.getElementById('skeleton');
+    const skTpl = document.getElementById('sk-template');
+    const q = document.getElementById('q');
+    const cat = document.getElementById('cat');
+    const month = document.getElementById('month');
+    const onlyUpcoming = document.getElementById('onlyUpcoming');
+    const sort = document.getElementById('sort');
+    const countNum = document.getElementById('countNum');
+    const activeFilter = document.getElementById('activeFilter');
+    const activeFilterText = document.getElementById('activeFilterText');
+    const emptyState = document.getElementById('emptyState');
+
+    /* Skeleton inicial */
+    (function showSkeleton(){
+      const frag = document.createDocumentFragment();
+      for(let i=0;i<6;i++){ frag.appendChild(skTpl.content.cloneNode(true)); }
+      skeleton.appendChild(frag);
+    })();
+
+    /* Preenche selects dinâmicos */
+    function fillCategoryMonth(){
+      const cats = Array.from(new Set(state.all.map(e => e.category || 'Geral'))).sort();
+      cat.innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c => `<option>${c}</option>`).join('');
+      const months = Array.from(new Set(state.all.map(e => {
+        const d = new Date(e.start);
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+      }))).sort();
+      month.innerHTML = '<option value="">Todos os meses</option>' + months.map(m => {
+        const [y,mm] = m.split('-');
+        return `<option value="${m}">${MONTHS[parseInt(mm,10)-1]}/${y}</option>`;
+      }).join('');
+    }
+
+    /* Filtro/sort */
+    function applyFilters(openId){
+      const term = q.value.trim().toLowerCase();
+      const c = cat.value;
+      const m = month.value;
+      const onlyFut = onlyUpcoming.checked;
+      const s = sort.value;
+
+      const now = new Date();
+
+      let list = [...state.all];
+
+      if(term){
+        list = list.filter(ev =>
+          (ev.title||'').toLowerCase().includes(term) ||
+          (ev.location||'').toLowerCase().includes(term) ||
+          (ev.category||'').toLowerCase().includes(term)
+        );
+      }
+      if(c){ list = list.filter(ev => (ev.category||'') === c); }
+      if(m){
+        list = list.filter(ev => {
+          const d = new Date(ev.start);
+          return `${d.getFullYear()}-${pad2(d.getMonth()+1)}` === m;
+        });
+      }
+      if(onlyFut){
+        list = list.filter(ev => new Date(ev.end || ev.start) >= now);
+      }
+
+      if(s === 'az'){
+        list.sort((a,b)=> (a.title||'').localeCompare(b.title||''));
+      } else if(s === 'recent'){
+        list.sort((a,b)=> Date.parse(b.createdAt||0) - Date.parse(a.createdAt||0));
+      } else { // nearest
+        list.sort((a,b)=> Date.parse(a.start) - Date.parse(b.start));
+      }
+
+      state.filtered = list;
+      renderGrid();
+      updateBadges();
+
+      if(openId){ const ev = state.filtered.find(x => x.id === openId); if(ev) openDetails(ev.id); }
+    }
+
+    function updateBadges(){
+      countNum.textContent = state.filtered.length;
+      const parts = [];
+      if(q.value.trim()) parts.push(`Texto: "${q.value.trim()}"`);
+      if(cat.value) parts.push(`Categoria: ${cat.value}`);
+      if(month.value){ const [y,mm] = month.value.split('-'); parts.push(`Mês: ${MONTHS[parseInt(mm,10)-1]}/${y}`); }
+      if(onlyUpcoming.checked) parts.push('Somente futuros');
+      if(parts.length){ activeFilter.classList.remove('d-none'); activeFilterText.textContent = parts.join(' • '); }
+      else { activeFilter.classList.add('d-none'); }
+    }
+
+    function renderGrid(){
+      grid.innerHTML = '';
+      if(!state.filtered.length){
+        grid.classList.add('d-none');
+        emptyState.classList.remove('d-none');
+        return;
+      }
+      emptyState.classList.add('d-none');
+
+      const frag = document.createDocumentFragment();
+      state.filtered.forEach(ev => frag.appendChild(renderCard(ev)));
+      grid.appendChild(frag);
+
+      grid.classList.remove('d-none');
+      skeleton.classList.add('d-none');
+    }
+
+    function renderCard(ev){
+      const d = new Date(ev.start);
+      const day = d.getDate();
+      const mon = MONTHS[d.getMonth()];
+      const col = document.createElement('div');
+      col.className = 'col-12 col-md-6 col-xl-4';
+
+      const isFree = (ev.price ?? 0) <= 0;
+
+      col.innerHTML = `
+        <article class="event-card h-100" data-open="${ev.id}" role="button">
+          <div class="banner">
+            ${ev.banner ? `<img src="${ev.banner}" alt="${ev.title}">` : ''}
+            <div class="date-pill"><div class="day">${day}</div><div class="mon">${mon}</div></div>
+          </div>
+          <div class="p-3">
+            <h3 class="h6 mb-1">${ev.title}</h3>
+            <div class="text-muted small"><i class="bi bi-geo-alt me-1"></i>${ev.location || 'A definir'}</div>
+            <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+              <span class="tag"><i class="bi bi-tags"></i><span class="ms-1">${ev.category || 'Geral'}</span></span>
+              ${isFree ? `<span class="badge-free">Gratuito</span>` : `<span class="badge-paid">Pago</span>`}
+              <span class="tag"><i class="bi bi-clock-history"></i><span class="ms-1">${fmtWhen(ev.start, ev.end)}</span></span>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <button class="btn btn-outline-secondary btn-sm flex-grow-1" data-open="${ev.id}">Detalhes</button>
+              <a class="btn btn-gradient btn-sm" href="${ev.link || '#'}" target="_blank">Inscrever-se</a>
+            </div>
+          </div>
+        </article>`;
+      return col;
+    }
+
+    /* Ações UI */
+    q.addEventListener('input', debounce(()=>applyFilters(), 160));
+    cat.addEventListener('change', ()=>applyFilters());
+    month.addEventListener('change', ()=>applyFilters());
+    onlyUpcoming.addEventListener('change', ()=>applyFilters());
+    sort.addEventListener('change', ()=>applyFilters());
+    document.getElementById('clearFilters').addEventListener('click', ()=>{
+      q.value=''; cat.value=''; month.value=''; onlyUpcoming.checked=true; sort.value='nearest'; applyFilters();
+    });
+
+    // Delegação para abrir modal
+    document.getElementById('grid').addEventListener('click', (e)=>{
+      const openEl = e.target.closest('[data-open]');
+      if(openEl){ openDetails(openEl.getAttribute('data-open')); }
+    });
+
+    /* Modal de detalhes */
+    const modalEl = document.getElementById('eventModal');
+    const modal = new bootstrap.Modal(modalEl);
+    function openDetails(id){
+      const ev = state.all.find(x => x.id === id);
+      if(!ev) return;
+      document.getElementById('evTitle').textContent = ev.title;
+      const img = document.getElementById('evImg');
+      if(ev.banner){ img.src = ev.banner; img.alt = ev.title; img.classList.remove('d-none'); } else { img.src=''; img.alt=''; img.classList.add('d-none'); }
+      document.getElementById('evWhen').textContent = fmtWhen(ev.start, ev.end);
+      document.getElementById('evWhere').textContent = ev.location || 'A definir';
+      document.getElementById('evCat').textContent = ev.category || 'Geral';
+      document.getElementById('evDesc').textContent = ev.description || '';
+      const priceWrap = document.getElementById('evPriceWrap');
+      const isFree = (ev.price ?? 0) <= 0;
+      priceWrap.innerHTML = isFree ? `<span class="badge-free">Evento gratuito</span>` : `<span class="badge-paid">R$ ${Number(ev.price).toFixed(2)}</span>`;
+      const link = document.getElementById('evLink'); link.href = ev.link || '#';
+      const ics = document.getElementById('evIcs'); ics.href = icsFor(ev); ics.download = `${ev.id}.ics`;
+      modal.show();
+      // adiciona hash na URL (deep-linking)
+      history.replaceState(null, '', `#e=${encodeURIComponent(id)}`);
+    }
+
+    /* Utils */
+    function debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); } }
+
+    /* Reveal on view */
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); observer.unobserve(e.target); }});
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* Init */
+    (function init(){
+      fillCategoryMonth();
+      // simula carregamento curto para skeleton
+      setTimeout(()=>{
+        applyFilters();
+        // hash deep-link
+        const match = location.hash.match(/#e=([^&]+)/);
+        if(match){ const id = decodeURIComponent(match[1]); applyFilters(id); }
+      }, 250);
+    })();
+  </script>
+</body>
+</html>

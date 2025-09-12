@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Convênios AFUJF</title>
+  <meta name="theme-color" content="#0068A9"/>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --grad-a:#008B5C; --grad-b:#0068A9;
+      --white:#FFF; --black:#353535;
+      --success:#009420; --error:#D00000;
+      --radius:18px;
+      --shadow-sm:0 6px 14px rgba(0,0,0,.08);
+      --shadow-md:0 14px 28px rgba(0,0,0,.12), 0 6px 14px rgba(0,0,0,.08);
+      --shadow-lg:0 28px 60px rgba(0,0,0,.16), 0 12px 24px rgba(0,0,0,.10);
+    }
+
+    body{
+      margin:0; color:var(--black);
+      background:
+        radial-gradient(55% 70% at 10% -10%, rgba(0,139,92,.12), transparent 60%),
+        radial-gradient(45% 60% at 120% 10%, rgba(0,104,169,.12), transparent 60%),
+        linear-gradient(#f7fafc, #edf2f7);
+      min-height:100vh; overflow-x:hidden;
+    }
+
+    /* === Botão/logo fixo (borda só embaixo/direita) === */
+    .brand-square{
+      position: fixed; top:0; left:0; width:64px; height:64px; padding:0; border:0;
+      background:#0b0b0b; border-radius:0 0 var(--radius) 0; overflow:hidden; z-index:1100;
+      box-shadow: 10px 16px 24px rgba(0,0,0,.28);
+    }
+    .brand-square img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .brand-square::after{
+      content:""; position:absolute; inset:0;
+      border:2px solid rgba(255,255,255,.14); border-top:0; border-left:0;
+      border-bottom-right-radius:var(--radius); pointer-events:none;
+      box-shadow: 6px 10px 18px rgba(0,0,0,.25);
+    }
+
+    /* === HERO === */
+    .page-hero{
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      color:#fff; padding: 88px 0 42px; position:relative; overflow:hidden;
+      box-shadow: inset 0 -30px 60px rgba(0,0,0,.14);
+    }
+    .page-hero::before, .page-hero::after{
+      content:""; position:absolute; border-radius:50%; filter: blur(2px); opacity:.22; pointer-events:none;
+    }
+    .page-hero::before{ width:420px; height:420px; left:-12%; top:-22%; background: radial-gradient(closest-side,#00b07a,transparent 70%); }
+    .page-hero::after { width:520px; height:520px; right:-18%; bottom:-28%; background: radial-gradient(closest-side,#0b86d0,transparent 70%); }
+    .hero-sep{ height:10px; background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,0)); mask: linear-gradient(#000, transparent); }
+
+    /* === CONTROLES (sticky + glass) === */
+    .controls{ margin-top:-20px; }
+    .filter-card{
+      background: rgba(255,255,255,.8); border:0; border-radius:18px; box-shadow: var(--shadow-md);
+      backdrop-filter: blur(8px);
+      position: sticky; top: 16px; z-index: 20;
+    }
+    .input-group:focus-within{ box-shadow: 0 0 0 .2rem rgba(0,104,169,.15); border-radius: 10px; }
+    .chip{
+      display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .65rem;
+      border-radius:999px; background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.06);
+      font-size:.9rem;
+    }
+
+    /* === GRID === */
+    .conv-card{
+      position:relative; border:0; border-radius:18px; background:rgba(255,255,255,.92);
+      box-shadow: var(--shadow-md); overflow:hidden; height:100%;
+      transition: transform .2s ease, box-shadow .25s ease, filter .2s ease;
+      backdrop-filter: blur(4px);
+    }
+    .conv-card:hover{ transform: translateY(-4px); box-shadow: var(--shadow-lg); filter: brightness(1.01); }
+    .conv-card::before{
+      content:""; position:absolute; inset:-1px; border-radius:20px; padding:1px;
+      background: linear-gradient(120deg, rgba(0,139,92,.35), rgba(0,104,169,.35), rgba(255,255,255,.35));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
+      animation: hue 8s linear infinite;
+    }
+    @keyframes hue{ 0%{ filter:hue-rotate(0deg)} 100%{filter:hue-rotate(360deg)} }
+
+    .logo-box{
+      height:150px; background:#fff; display:flex; align-items:center; justify-content:center;
+      border-bottom:1px solid rgba(0,0,0,.06); position:relative; overflow:hidden;
+    }
+    .logo-img{ max-width: 90%; max-height: 110px; object-fit: contain; filter: saturate(1.05); }
+    .logo-placeholder{
+      width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+      color:#fff; font-weight:800; font-size:1.7rem;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+    }
+    .ribbon{
+      position:absolute; top:12px; right:-36px; transform: rotate(35deg);
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      color:#fff; font-weight:700; font-size:.8rem; padding:.25rem 2.2rem; letter-spacing:.2px;
+      box-shadow: var(--shadow-sm); opacity:.95;
+    }
+
+    .discount-badge{
+      display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .55rem;
+      border-radius:10px; background: rgba(0,148,32,.09); color: var(--success);
+      font-weight:700; font-size:.85rem;
+    }
+    .fav-btn{ border:0; background:transparent; color:#ffb703; font-size:1.25rem; line-height:1; }
+    .fav-btn[aria-pressed="false"]{ color:#d4d4d4; }
+    .fav-btn.animate{ animation: pop .32s ease; }
+    @keyframes pop{ 50%{ transform: scale(1.25) } }
+
+    .category-pill{
+      display:inline-flex; align-items:center; gap:.4rem; padding:.25rem .55rem; border-radius:999px;
+      background: rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.06); font-size:.8rem;
+    }
+
+    .btn-gradient{
+      color:#fff; border:none; border-radius:12px;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      box-shadow: var(--shadow-sm);
+      transition: transform .08s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .btn-gradient:hover{ transform: translateY(-1px); box-shadow: var(--shadow-md); filter: brightness(1.03); }
+
+    .empty{ border:1px dashed rgba(0,0,0,.15); border-radius:16px; padding:1rem; background:#fff; }
+
+    /* Skeleton loading */
+    .skeleton .sk{ background: #e9ecef; border-radius:10px; position:relative; overflow:hidden; }
+    .skeleton .sk::after{
+      content:""; position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0));
+      transform: translateX(-100%); animation: shine 1.2s infinite;
+    }
+    @keyframes shine{ 100%{ transform: translateX(100%) } }
+
+    /* Reveal */
+    .reveal{ opacity:0; transform: translateY(14px) scale(.98); }
+    .reveal.in{ opacity:1; transform:none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1.05); }
+
+    /* Offcanvas */
+    .offcanvas{
+      --bs-offcanvas-width: 320px;
+      background: linear-gradient(135deg, rgba(0,139,92,.98), rgba(0,104,169,.98));
+    }
+    .menu-logo{ width:36px; height:36px; object-fit:cover; border-radius:8px; }
+    .menu-link{ display:flex; align-items:center; gap:.65rem; padding:.8rem 1rem; border-radius:12px; color:#fff; text-decoration:none; }
+    .menu-link:hover{ background: rgba(255,255,255,.10) }
+
+    /* FAB to top */
+    .fab{
+      position: fixed; right: 16px; bottom: 16px; z-index: 50;
+      border-radius:50%; width:48px; height:48px; display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b)); color:#fff;
+      box-shadow: var(--shadow-md); border:0; opacity:0; visibility:hidden; transform: translateY(8px);
+      transition: all .2s ease;
+    }
+    .fab.show{ opacity:1; visibility:visible; transform:none; }
+  </style>
+</head>
+<body>
+
+  <!-- Botão/menu -->
+  <button class="brand-square" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-label="Abrir menu">
+    <img src="afujf.png" alt="AFUJF">
+  </button>
+
+  <!-- MENU Offcanvas -->
+  <div class="offcanvas offcanvas-start text-white" tabindex="-1" id="mainMenu" aria-labelledby="mainMenuLabel">
+    <div class="offcanvas-header">
+      <div class="d-flex align-items-center gap-2">
+        <img class="menu-logo" src="afujf.png" alt="AFUJF">
+        <h5 class="mb-0 fw-semibold" id="mainMenuLabel">AFUJF</h5>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="mb-2 small opacity-75">Navegação</div>
+      <ul class="list-unstyled vstack gap-1">
+        <li><a class="menu-link" href="dashboard.html"><i class="bi bi-house"></i>Dashboard</a></li>
+        <li><a class="menu-link" href="carteirinha.html"><i class="bi bi-person-badge"></i>Minha carteirinha</a></li>
+        <li><a class="menu-link" href="convenios.html"><i class="bi bi-bag-heart"></i>Convênios AFUJF</a></li>
+        <li><a class="menu-link" href="eventos.html"><i class="bi bi-calendar-event"></i>Eventos</a></li>
+        <li id="link-associados" class="d-none"><a class="menu-link" href="associados.html"><i class="bi bi-people-gear"></i>Associados (Admin)</a></li>
+      </ul>
+      <hr class="border-light opacity-50 my-4">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="small opacity-75">Usuário</div>
+          <div id="userLabel" class="fw-semibold">Visitante</div>
+        </div>
+        <div class="d-flex gap-2">
+          <a id="btnLogin" href="login.html" class="btn btn-outline-light btn-sm">Entrar</a>
+          <button id="btnLogout" class="btn btn-outline-light btn-sm d-none">Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="page-hero">
+    <div class="container">
+      <h1 class="display-6 fw-bold mb-1">Convênios AFUJF</h1>
+      <div class="opacity-75">Benefícios e parcerias para associados</div>
+    </div>
+    <div class="hero-sep"></div>
+  </header>
+
+  <!-- CONTROLES -->
+  <section class="controls">
+    <div class="container">
+      <div class="card filter-card p-3 p-md-4 reveal">
+        <div class="row g-2 g-md-3 align-items-center">
+          <div class="col-12 col-md-5">
+            <div class="input-group">
+              <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+              <input id="search" type="search" class="form-control" placeholder="Buscar convênio (nome, categoria, benefício)..." autocomplete="off">
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <select id="category" class="form-select">
+              <option value="">Todas as categorias</option>
+              <option>Saúde</option><option>Esportes</option><option>Farmácia</option>
+              <option>Hotelaria</option><option>Ótica</option><option>Clínicas</option>
+              <option>Serviços</option><option>Educação</option><option>Alimentação</option>
+            </select>
+          </div>
+          <div class="col-6 col-md-2">
+            <select id="sort" class="form-select">
+              <option value="relevance">Ordenar por: Relevância</option>
+              <option value="az">A–Z</option>
+              <option value="discount">Maior desconto</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-2 d-flex align-items-center justify-content-between justify-content-md-end gap-2">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="onlyFavs">
+              <label class="form-check-label" for="onlyFavs">Favoritos</label>
+            </div>
+            <button id="clearFilters" class="btn btn-outline-secondary btn-sm">Limpar</button>
+          </div>
+        </div>
+
+        <!-- chips removidos -->
+
+        <div class="d-flex align-items-center gap-2 mt-3">
+          <span id="count" class="chip"><i class="bi bi-grid-3x3-gap"></i> <span id="countNum">0</span> convênios</span>
+          <span id="activeFilter" class="chip d-none"><i class="bi bi-funnel"></i> <span id="activeFilterText"></span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRID -->
+  <section class="py-4">
+    <div class="container">
+      <!-- Skeleton inicial -->
+      <div id="skeleton" class="row g-3 g-lg-4 skeleton">
+        <template id="sk-template">
+          <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+            <div class="conv-card p-0">
+              <div class="sk" style="height:150px;"></div>
+              <div class="p-3">
+                <div class="sk" style="height:18px; width:70%; margin-bottom:8px;"></div>
+                <div class="sk" style="height:12px; width:90%; margin-bottom:6px;"></div>
+                <div class="sk" style="height:12px; width:60%; margin-bottom:14px;"></div>
+                <div class="sk" style="height:34px; width:100%;"></div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div id="grid" class="row g-3 g-lg-4 reveal d-none"><!-- cards via JS --></div>
+
+      <div class="text-center mt-3">
+        <button id="loadMore" class="btn btn-gradient px-4 d-none">Mostrar mais</button>
+      </div>
+
+      <div id="emptyState" class="empty d-none mt-3 text-center">
+        <i class="bi bi-emoji-neutral fs-4 d-block mb-2"></i>
+        Nenhum convênio encontrado. Experimente limpar filtros ou buscar por outro termo.
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL Detalhes -->
+  <div class="modal fade" id="convModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="border:0;border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;">
+        <div class="modal-header" style="background:linear-gradient(135deg, var(--grad-a), var(--grad-b)); color:#fff;">
+          <h5 class="modal-title" id="convTitle">Convênio</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="logo-box" style="width:160px;height:110px;border:1px solid rgba(0,0,0,.08);border-radius:12px;">
+              <img id="convLogo" class="logo-img" alt="">
+            </div>
+            <div class="vstack gap-1">
+              <span id="convCategory" class="category-pill"><i class="bi bi-tags"></i><span class="ms-1"></span></span>
+              <span id="convDiscount" class="discount-badge d-none"><i class="bi bi-patch-check"></i><span class="ms-1"></span></span>
+              <a id="convLink" href="#" target="_blank" class="btn btn-gradient btn-sm mt-1">Visitar site</a>
+            </div>
+          </div>
+          <p id="convDesc" class="mb-2"></p>
+          <div id="convMeta" class="text-muted small"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button id="toTop" class="fab" title="Voltar ao topo"><i class="bi bi-arrow-up-short fs-4"></i></button>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* ===== Sessão / Navbar ===== */
+    function getSession(){ try{ return JSON.parse(localStorage.getItem("session")) || null }catch{ return null } }
+    const session = getSession();
+    const isAdmin = !!session && session.role === "admin";
+    const userLabel = document.getElementById("userLabel");
+    const btnLogin = document.getElementById("btnLogin");
+    const btnLogout = document.getElementById("btnLogout");
+    const linkAssociados = document.getElementById("link-associados");
+    if(session){ userLabel.textContent = session.matricula ? `Matrícula ${session.matricula}` : (session.email || "Usuário"); btnLogin?.classList.add("d-none"); btnLogout?.classList.remove("d-none"); }
+    if(isAdmin){ linkAssociados?.classList.remove("d-none"); }
+    btnLogout?.addEventListener("click", () => { localStorage.removeItem("session"); window.location.href = "login.html"; });
+
+    /* ===== Dados ===== */
+    function slug(s){ return (s||"").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+    function initials(name){ return (name||"").split(/\s+/).map(w=>w[0]).join('').slice(0,3).toUpperCase(); }
+
+    function getPartners(){
+      try{
+        const local = JSON.parse(localStorage.getItem("convenios"));
+        if (Array.isArray(local) && local.length){
+          return local.map(p => ({
+            id: slug(p.name || ''),
+            name: p.name || 'Convênio',
+            logo: p.logo || null,
+            href: p.href || '#',
+            category: p.category || 'Geral',
+            discount: p.discount || null,
+            description: p.description || 'Convênio participante da rede de benefícios AFUJF.',
+            phone: p.phone || null,
+            address: p.address || null,
+            createdAt: p.createdAt || null
+          }));
+        }
+      }catch{}
+      // Seed
+      return [
+        { name:"Clínica Bem-Estar", category:"Clínicas", discount:"15% off", href:"#", logo:null, description:"Consultas e exames com condições especiais.", phone:"(32) 0000-0000", address:"Rua A, 100" },
+        { name:"Academia TopFit",   category:"Esportes", discount:"20% off", href:"#", logo:null, description:"Planos mensais com desconto para associados.", phone:"(32) 0000-0001", address:"Rua B, 55" },
+        { name:"Farmácia Vida+",    category:"Farmácia", discount:"Até 25% off", href:"#", logo:null, description:"Medicamentos e perfumaria com descontos.", phone:"(32) 0000-0002", address:"Av. Central, 12" },
+        { name:"Laboratório Alfa",  category:"Saúde",    discount:"10% off", href:"#", logo:null, description:"Exames laboratoriais com valor diferenciado.", phone:"(32) 0000-0003", address:"Rua C, 41" },
+        { name:"Odonto Sorriso",    category:"Saúde",    discount:"18% off", href:"#", logo:null, description:"Tratamentos odontológicos com desconto.", phone:"(32) 0000-0004", address:"Rua D, 90" },
+        { name:"Hotel Central",     category:"Hotelaria",discount:"12% off", href:"#", logo:null, description:"Tarifas especiais para associados AFUJF.", phone:"(32) 0000-0005", address:"Av. Brasil, 200" },
+        { name:"Ótica Vision",      category:"Ótica",    discount:"15% off", href:"#", logo:null, description:"Lentes e armações com condições especiais.", phone:"(32) 0000-0006", address:"Rua E, 300" },
+        { name:"Clínica Cardio",    category:"Clínicas", discount:"10% off", href:"#", logo:null, description:"Cardiologia e check-ups com desconto.", phone:"(32) 0000-0007", address:"Rua F, 210" },
+        { name:"Colégio Saber+",    category:"Educação", discount:"Bolsa parcial", href:"#", logo:null, description:"Condições diferenciadas na mensalidade.", phone:"(32) 0000-0008", address:"Rua G, 10" },
+        { name:"Restaurante Sabor", category:"Alimentação", discount:"10% off", href:"#", logo:null, description:"Almoço executivo com desconto fixo.", phone:"(32) 0000-0009", address:"Rua H, 500" },
+        { name:"Fisiovida",         category:"Saúde",    discount:"15% off", href:"#", logo:null, description:"Fisioterapia e pilates com desconto.", phone:"(32) 0000-0010", address:"Rua I, 45" },
+        { name:"Serviços Alfa",     category:"Serviços", discount:null, href:"#", logo:null, description:"Rede de serviços gerais conveniada.", phone:"(32) 0000-0011", address:"Rua J, 77" }
+      ].map(p => ({ id: slug(p.name), createdAt: new Date().toISOString(), ...p }));
+    }
+
+    /* ===== Favoritos ===== */
+    function getFavs(){ try{ return JSON.parse(localStorage.getItem('favoritesConvenios')) || [] }catch{ return [] } }
+    function setFavs(list){ localStorage.setItem('favoritesConvenios', JSON.stringify(list)) }
+    function toggleFav(id){
+      const favs = new Set(getFavs());
+      favs.has(id) ? favs.delete(id) : favs.add(id);
+      setFavs([...favs]); return favs.has(id);
+    }
+    function isFav(id){ return getFavs().includes(id) }
+
+    /* ===== Render ===== */
+    const state = { all: getPartners(), filtered: [], page: 1, pageSize: 12 };
+
+    const grid = document.getElementById('grid');
+    const skeleton = document.getElementById('skeleton');
+    const skTpl = document.getElementById('sk-template');
+    const countNum = document.getElementById('countNum');
+    const activeFilter = document.getElementById('activeFilter');
+    const activeFilterText = document.getElementById('activeFilterText');
+    const emptyState = document.getElementById('emptyState');
+    const loadMoreBtn = document.getElementById('loadMore');
+
+    (function showSkeleton(){
+      const frag = document.createDocumentFragment();
+      for(let i=0;i<8;i++){ frag.appendChild(skTpl.content.cloneNode(true)); }
+      skeleton.appendChild(frag);
+    })();
+
+    function applyFilters(){
+      const q = document.getElementById('search').value.trim().toLowerCase();
+      const cat = document.getElementById('category').value;
+      const onlyFavs = document.getElementById('onlyFavs').checked;
+      const sort = document.getElementById('sort').value;
+
+      let list = [...state.all];
+
+      if(q){
+        list = list.filter(p =>
+          (p.name||'').toLowerCase().includes(q) ||
+          (p.category||'').toLowerCase().includes(q) ||
+          (p.description||'').toLowerCase().includes(q) ||
+          (p.discount||'').toLowerCase().includes(q)
+        );
+      }
+      if(cat){ list = list.filter(p => (p.category||'') === cat); }
+      if(onlyFavs){
+        const favs = new Set(getFavs());
+        list = list.filter(p => favs.has(p.id));
+      }
+
+      if(sort === 'az'){
+        list.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+      } else if(sort === 'discount'){
+        const val = s => { if(!s) return 0; const m = (s+'').match(/(\d+)\s*%/); return m ? parseInt(m[1],10) : 0; };
+        list.sort((a,b)=> val(b.discount) - val(a.discount));
+      } else {
+        const favs = new Set(getFavs());
+        list.sort((a,b)=>{
+          const af = favs.has(a.id) ? 1 : 0, bf = favs.has(b.id) ? 1 : 0;
+          const an = a.createdAt ? Date.parse(a.createdAt) : 0;
+          const bn = b.createdAt ? Date.parse(b.createdAt) : 0;
+          return (bf-af) || (bn-an);
+        });
+      }
+
+      state.filtered = list;
+      state.page = 1;
+      renderGrid();
+      updateBadges(q, cat, onlyFavs);
+    }
+
+    function updateBadges(q, cat, onlyFavs){
+      countNum.textContent = state.filtered.length;
+      const parts = [];
+      if(q) parts.push('Texto: "'+q+'"');
+      if(cat) parts.push('Categoria: '+cat);
+      if(onlyFavs) parts.push('Apenas favoritos');
+      if(parts.length){
+        activeFilter.classList.remove('d-none');
+        activeFilterText.textContent = parts.join(' • ');
+      } else {
+        activeFilter.classList.add('d-none');
+      }
+    }
+
+    function renderGrid(){
+      const end = state.page * state.pageSize;
+      const pageItems = state.filtered.slice(0, end);
+
+      grid.innerHTML = '';
+      if(!pageItems.length){
+        grid.classList.add('d-none');
+        emptyState.classList.remove('d-none');
+        loadMoreBtn.classList.add('d-none');
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      pageItems.forEach(p => frag.appendChild(renderCard(p)));
+      grid.appendChild(frag);
+
+      grid.classList.remove('d-none');
+      emptyState.classList.add('d-none');
+      loadMoreBtn.classList.toggle('d-none', end >= state.filtered.length);
+
+      skeleton.classList.add('d-none');
+    }
+
+    function renderCard(p){
+      const col = document.createElement('div');
+      col.className = 'col-12 col-sm-6 col-lg-4 col-xl-3';
+      const fav = isFav(p.id);
+      const hasDiscount = !!p.discount;
+
+      col.innerHTML = `
+        <div class="conv-card h-100">
+          <div class="logo-box">
+            ${p.logo ? `<img class="logo-img" src="${p.logo}" alt="${p.name}">`
+                      : `<div class="logo-placeholder">${initials(p.name)}</div>`}
+            ${hasDiscount ? `<div class="ribbon">${p.discount}</div>` : ``}
+          </div>
+          <div class="p-3">
+            <div class="d-flex align-items-start justify-content-between">
+              <h3 class="h6 mb-0 me-2">${p.name}</h3>
+              <button class="fav-btn" title="Favoritar" aria-pressed="${fav}" data-id="${p.id}">
+                <i class="bi ${fav ? 'bi-star-fill' : 'bi-star'}"></i>
+              </button>
+            </div>
+            <div class="d-flex align-items-center gap-2 mt-2">
+              <span class="category-pill"><i class="bi bi-tags"></i><span class="ms-1">${p.category || 'Geral'}</span></span>
+              ${p.discount ? `<span class="discount-badge"><i class="bi bi-patch-check"></i>${p.discount}</span>` : ''}
+            </div>
+            <p class="small text-muted mt-2 mb-3">${p.description || 'Convênio participante da rede AFUJF.'}</p>
+            <div class="d-flex gap-2">
+              <a href="${p.href || '#'}" target="_blank" class="btn btn-gradient btn-sm flex-grow-1">Abrir</a>
+              <button class="btn btn-outline-secondary btn-sm" data-action="details" data-id="${p.id}">
+                Detalhes
+              </button>
+            </div>
+          </div>
+        </div>`;
+      return col;
+    }
+
+    // Eventos de UI
+    document.getElementById('search').addEventListener('input', debounce(applyFilters, 180));
+    document.getElementById('category').addEventListener('change', applyFilters);
+    document.getElementById('onlyFavs').addEventListener('change', applyFilters);
+    document.getElementById('sort').addEventListener('change', applyFilters);
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      document.getElementById('search').value = '';
+      document.getElementById('category').value = '';
+      document.getElementById('onlyFavs').checked = false;
+      document.getElementById('sort').value = 'relevance';
+      applyFilters();
+    });
+    document.getElementById('loadMore').addEventListener('click', () => { state.page += 1; renderGrid(); });
+
+    // Delegação: favoritos + detalhes
+    document.getElementById('grid').addEventListener('click', (e) => {
+      const favBtn = e.target.closest('.fav-btn');
+      if(favBtn){
+        const id = favBtn.getAttribute('data-id');
+        const active = toggleFav(id);
+        favBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        favBtn.innerHTML = `<i class="bi ${active ? 'bi-star-fill' : 'bi-star'}"></i>`;
+        favBtn.classList.add('animate'); setTimeout(()=>favBtn.classList.remove('animate'), 320);
+        return;
+      }
+      const detailsBtn = e.target.closest('[data-action="details"]');
+      if(detailsBtn){ openDetails(detailsBtn.getAttribute('data-id')); }
+    });
+
+    // Modal de detalhes
+    const modalEl = document.getElementById('convModal');
+    const modal = new bootstrap.Modal(modalEl);
+    function openDetails(id){
+      const p = state.all.find(x => x.id === id);
+      if(!p) return;
+      document.getElementById('convTitle').textContent = p.name;
+      const logo = document.getElementById('convLogo');
+      if(p.logo){ logo.src = p.logo; logo.alt = p.name; logo.classList.remove('d-none'); }
+      else { logo.src = ''; logo.alt = ''; logo.classList.add('d-none'); }
+      const catEl = document.getElementById('convCategory');
+      catEl.querySelector('span').textContent = p.category || 'Geral';
+      const discEl = document.getElementById('convDiscount');
+      if(p.discount){ discEl.classList.remove('d-none'); discEl.querySelector('span').textContent = p.discount; }
+      else { discEl.classList.add('d-none'); }
+      document.getElementById('convLink').href = p.href || '#';
+      document.getElementById('convDesc').textContent = p.description || '';
+      document.getElementById('convMeta').innerHTML = [
+        p.phone ? `<div><i class="bi bi-telephone me-1"></i> ${p.phone}</div>` : '',
+        p.address ? `<div><i class="bi bi-geo-alt me-1"></i> ${p.address}</div>` : ''
+      ].join('');
+      modal.show();
+    }
+
+    /* Utils */
+    function debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); } }
+
+    /* Reveal on view */
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); observer.unobserve(e.target); }});
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* FAB top */
+    const toTop = document.getElementById('toTop');
+    toTop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      toTop.classList.toggle('show', y > 400);
+    });
+
+    // Inicializa
+    (function init(){
+      // simula carregamento curto para skeleton
+      setTimeout(()=>{ state.filtered = [...state.all]; applyFilters(); }, 250);
+    })();
+  </script>
+</body>
+</html>

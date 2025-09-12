@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard • AFUJF</title>
+  <meta name="theme-color" content="#0068A9"/>
+
+  <!-- Bootstrap CSS + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --grad-a:#008B5C; --grad-b:#0068A9;
+      --white:#FFF; --black:#353535;
+      --success:#009420;
+      --radius:18px;
+      --shadow-sm:0 6px 14px rgba(0,0,0,.08);
+      --shadow-md:0 14px 28px rgba(0,0,0,.12), 0 6px 14px rgba(0,0,0,.08);
+      --shadow-lg:0 28px 60px rgba(0,0,0,.16), 0 12px 24px rgba(0,0,0,.10);
+    }
+
+    /* Fundo sutil */
+    body{
+      margin:0; color:var(--black);
+      background:
+        radial-gradient(55% 70% at 10% -10%, rgba(0,139,92,.12), transparent 60%),
+        radial-gradient(45% 60% at 120% 10%, rgba(0,104,169,.12), transparent 60%),
+        linear-gradient(#f7fafc, #edf2f7);
+      min-height:100vh; overflow-x:hidden;
+    }
+
+    /* === Logo fixo, canto sup/esq (borda só embaixo/direita) === */
+    .brand-square{
+      position: fixed; top:0; left:0; width:64px; height:64px; padding:0; border:0;
+      background:#0b0b0b; border-radius:0 0 var(--radius) 0; overflow:hidden; z-index:1100;
+      box-shadow: 10px 16px 24px rgba(0,0,0,.28);
+    }
+    .brand-square img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .brand-square::after{
+      content:""; position:absolute; inset:0;
+      border:2px solid rgba(255,255,255,.14); border-top:0; border-left:0;
+      border-bottom-right-radius:var(--radius); pointer-events:none;
+      box-shadow: 6px 10px 18px rgba(0,0,0,.25);
+    }
+
+    /* === BANNER / EVENTOS === */
+    .events-wrap{
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      color:#fff; padding: 90px 0 32px; position:relative; overflow:hidden;
+      box-shadow: inset 0 -40px 80px rgba(0,0,0,.15);
+    }
+    .events-wrap::before, .events-wrap::after{
+      content:""; position:absolute; border-radius:50%;
+      filter: blur(3px); opacity:.28; pointer-events:none;
+    }
+    .events-wrap::before{ width:420px; height:420px; left:-160px; top:-120px; background: radial-gradient(closest-side,#00b07a,transparent 70%); animation: orb1 16s ease-in-out infinite; }
+    .events-wrap::after { width:520px; height:520px; right:-200px; bottom:-180px; background: radial-gradient(closest-side,#0b86d0,transparent 70%); animation: orb2 20s ease-in-out infinite; }
+    @keyframes orb1{ 50%{ transform: translate(10px,14px) } }
+    @keyframes orb2{ 50%{ transform: translate(-12px,-10px) } }
+
+    .events-card{
+      border:0; border-radius:22px; background: rgba(255,255,255,.10);
+      backdrop-filter: blur(8px); box-shadow: var(--shadow-lg);
+      transform: translateZ(0); transition: transform .25s ease, box-shadow .25s ease, filter .2s ease;
+      position:relative; overflow:hidden; cursor:pointer;
+    }
+    .events-card:hover{ transform: translateY(-3px); box-shadow: 0 40px 60px rgba(0,0,0,.28); filter: brightness(1.03); }
+    /* Borda glow animada */
+    .events-card::before{
+      content:""; position:absolute; inset:-2px; border-radius:24px; padding:2px;
+      background: linear-gradient(120deg, rgba(255,255,255,.35), rgba(255,255,255,.08), rgba(255,255,255,.35));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      animation: borderGlow 4.8s linear infinite;
+    }
+    @keyframes borderGlow{ 0%{ filter:hue-rotate(0deg)} 100%{filter:hue-rotate(360deg)} }
+
+    .carousel-item{ padding: 1rem; }
+    .event-pill{
+      display:inline-flex; align-items:center; gap:.5rem; padding:.4rem .75rem;
+      background: rgba(0,0,0,.25); border-radius:999px; font-size:.9rem; color:#fff; box-shadow: var(--shadow-sm);
+    }
+    .slide-progress{ height:4px; border-radius:999px; background:rgba(255,255,255,.25); overflow:hidden; margin-bottom:.75rem; }
+    .slide-progress .bar{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, rgba(255,255,255,.75), #fff);
+      box-shadow: 0 0 16px rgba(255,255,255,.6);
+      transition: width 5s linear;
+    }
+
+    /* === Seções & cards === */
+    .section{ padding: 40px 0; }
+    .card{ border:0; border-radius:18px; box-shadow: var(--shadow-md); transition: transform .2s ease, box-shadow .25s ease; }
+    .card:hover{ transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+    .btn-gradient{
+      color:#fff; border:none; border-radius:12px;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+      box-shadow: var(--shadow-sm);
+      transition: transform .08s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .btn-gradient:hover{ transform: translateY(-1px); box-shadow: var(--shadow-md); filter: brightness(1.03); }
+    .btn-outline-soft{
+      color:var(--black); background:rgba(0,0,0,.04);
+      border:1px solid rgba(0,0,0,.06); border-radius:12px;
+    }
+
+    /* === Carteirinha === */
+    .card-id{
+      max-width: 620px; margin: 0 auto; border-radius: 22px; position:relative; overflow:hidden; color:#fff;
+      background: radial-gradient(120% 140% at 0% 0%, #07a16f, transparent 60%), radial-gradient(120% 140% at 100% 100%, #0a6bb9, #06528f);
+      box-shadow: 0 24px 60px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .card-id::before{ content:""; position:absolute; inset:10px; border-radius:18px; border:1px solid rgba(255,255,255,.20); pointer-events:none; }
+    .card-id::after{
+      content:""; position:absolute; top:-120%; left:-40%; width:60%; height:300%; transform: rotate(20deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); animation: shine 5.5s ease-in-out infinite;
+    }
+    @keyframes shine{ 0%{ left:-60% } 50%{ left:120% } 100%{ left:120% } }
+    .brand-mini{ width:44px; height:44px; border-radius:12px; overflow:hidden; background:#0b0b0b; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 18px rgba(0,0,0,.22); }
+    .brand-mini img{ width:100%; height:100%; object-fit:cover; }
+    .id-footer{ display:flex; gap:1rem; align-items:center; flex-wrap:wrap; color:#e9f6ff; font-weight:600; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+    .id-label{ opacity:.92; font-weight:700; letter-spacing:.2px; }
+
+    /* === Convênios (1 por slide) === */
+    .partners-wrap{ padding: 20px 0 36px; }
+    .logo-card{
+      height: 180px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+      background:#fff; box-shadow: var(--shadow-sm); overflow:hidden;
+      transition: transform .2s ease, box-shadow .25s ease, filter .2s ease;
+    }
+    .logo-card:hover{ transform: translateY(-3px); box-shadow: var(--shadow-md); filter: saturate(1.05); }
+    .logo-img{ max-width: 90%; max-height: 120px; object-fit: contain; filter: grayscale(.1); }
+    .logo-placeholder{
+      width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+      color:#fff; font-weight:700; font-size:2rem;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
+    }
+    .partner-caption{ text-align:center; margin-top:.5rem; font-weight:600; opacity:.85; }
+
+    /* === Próximos eventos (cards compactos) === */
+    .next-events-card{
+      border:0; border-radius:16px; background:#fff; box-shadow: var(--shadow-md);
+      transition: transform .2s ease, box-shadow .25s ease, filter .2s ease;
+    }
+    .next-events-card:hover{ transform: translateY(-3px); box-shadow: var(--shadow-lg); filter: brightness(1.01); }
+    .date-badge{
+      display:inline-flex; align-items:center; gap:.5rem;
+      padding:.35rem .65rem; border-radius:999px; font-weight:600; font-size:.9rem;
+      background: linear-gradient(135deg, var(--grad-a), var(--grad-b)); color:#fff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Aparição suave */
+    .reveal{ opacity:0; transform: translateY(14px) scale(.98); }
+    .reveal.in{ opacity:1; transform:none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1.05); }
+  </style>
+</head>
+<body>
+
+  <!-- Botão/menu -->
+  <button class="brand-square" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-label="Abrir menu">
+    <img src="afujf.png" alt="AFUJF">
+  </button>
+
+  <!-- MENU Offcanvas -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="mainMenu" aria-labelledby="mainMenuLabel"
+       style="--bs-offcanvas-width:320px;background:linear-gradient(135deg,rgba(0,139,92,.98),rgba(0,104,169,.98));color:#fff;backdrop-filter:blur(8px);">
+    <div class="offcanvas-header">
+      <div class="d-flex align-items-center gap-2">
+        <img class="menu-logo" src="afujf.png" alt="AFUJF" style="width:36px;height:36px;border-radius:8px;object-fit:cover;">
+        <h5 class="mb-0 fw-semibold" id="mainMenuLabel">AFUJF</h5>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="mb-2 small opacity-75">Navegação</div>
+      <ul class="list-unstyled vstack gap-1">
+        <li><a class="d-flex align-items-center gap-2 text-white text-decoration-none p-2 rounded" href="dashboard.html"><i class="bi bi-house"></i>Dashboard</a></li>
+        <li><a class="d-flex align-items-center gap-2 text-white text-decoration-none p-2 rounded" href="carteirinha.html"><i class="bi bi-person-badge"></i>Minha carteirinha</a></li>
+        <li><a class="d-flex align-items-center gap-2 text-white text-decoration-none p-2 rounded" href="convenios.html"><i class="bi bi-bag-heart"></i>Convênios AFUJF</a></li>
+        <li><a class="d-flex align-items-center gap-2 text-white text-decoration-none p-2 rounded" href="eventos.html"><i class="bi bi-calendar-event"></i>Eventos</a></li>
+        <li id="link-associados" class="d-none"><a class="d-flex align-items-center gap-2 text-white text-decoration-none p-2 rounded" href="associados.html"><i class="bi bi-people-gear"></i>Associados (Admin)</a></li>
+      </ul>
+      <hr class="border-light opacity-50 my-4">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="small opacity-75">Usuário</div>
+          <div id="userLabel" class="fw-semibold">Visitante</div>
+        </div>
+        <div class="d-flex gap-2">
+          <a id="btnLogin" href="login.html" class="btn btn-outline-light btn-sm">Entrar</a>
+          <button id="btnLogout" class="btn btn-outline-light btn-sm d-none">Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1) BANNER: CARROSSEL DE EVENTOS (sem arrows) -->
+  <section class="events-wrap">
+    <div class="container reveal">
+      <div id="eventsCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner" id="eventsSlides"><!-- Slides via JS --></div>
+        <!-- sem arrows -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 2) MINHA CARTEIRINHA -->
+  <section class="section">
+    <div class="container">
+      <h2 class="h4 text-center mb-4 reveal">Minha Carteirinha</h2>
+
+      <div class="card-id p-4 p-sm-5 reveal">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="brand-mini"><img src="afujf.png" alt="AFUJF"></div>
+          <div class="fw-semibold">Associação de Funcionários Unimed Juiz de Fora</div>
+        </div>
+
+        <div class="mt-5 pt-2 d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div class="id-footer">
+            <span class="id-label">Nº:</span>
+            <span id="idNumber" class="fs-6"></span>
+            <span class="mx-1">|</span>
+            <span class="id-label">Validade:</span>
+            <span id="idValidity" class="fs-6"></span>
+          </div>
+          <a href="carteirinha.html" class="btn btn-light btn-sm fw-semibold shadow-sm">Visualizar Carteirinha</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3) CONVÊNIOS AFUJF (título central + 1 logo por slide, sem arrows) -->
+  <section class="section partners-wrap">
+    <div class="container reveal">
+      <h2 class="h4 text-center mb-3">Convênios AFUJF</h2>
+
+      <div id="partnersCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-inner" id="partnersSlides"><!-- Slides via JS --></div>
+        <!-- sem arrows -->
+      </div>
+
+      <a href="convenios.html" class="btn btn-gradient btn-lg w-100 mt-4">
+        Visualizar convênios
+      </a>
+    </div>
+  </section>
+
+  <!-- 4) PRÓXIMOS EVENTOS (abaixo de convênios) -->
+  <section class="section">
+    <div class="container reveal">
+      <h2 class="h4 mb-3">Próximos eventos</h2>
+      <div class="row g-3" id="nextEventsList"><!-- Itens via JS --></div>
+      <div class="text-end mt-2">
+        <a class="btn btn-outline-soft btn-sm" href="eventos.html"><i class="bi bi-arrow-right-circle me-1"></i>Ver todos</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* ===== Sessão/Admin ===== */
+    function getSession(){ try{ return JSON.parse(localStorage.getItem("session")) || null }catch{ return null } }
+    const session = getSession();
+    const isAdmin = !!session && session.role === "admin";
+    const userLabel = document.getElementById("userLabel");
+    const btnLogin = document.getElementById("btnLogin");
+    const btnLogout = document.getElementById("btnLogout");
+    const linkAssociados = document.getElementById("link-associados");
+    if(session){ userLabel.textContent = session.matricula ? `Matrícula ${session.matricula}` : (session.email || "Usuário"); btnLogin.classList.add("d-none"); btnLogout.classList.remove("d-none"); }
+    if(isAdmin){ linkAssociados?.classList.remove("d-none"); }
+    btnLogout?.addEventListener("click", () => { localStorage.removeItem("session"); window.location.reload(); });
+
+    /* ===== Eventos (banner) ===== */
+    function getEvents(){
+      try{
+        const local = JSON.parse(localStorage.getItem("events"));
+        if (Array.isArray(local) && local.length) return local;
+      }catch{}
+      return [
+        { title:"Encontro dos Associados", dateISO:"2025-10-20", description:"Networking e informes da diretoria.", href:"eventos.html" },
+        { title:"Palestra Saúde & Bem-Estar", dateISO:"2025-11-05", description:"Conteúdos práticos com especialistas.", href:"eventos.html" },
+        { title:"Campanha Solidária", dateISO:"2025-12-02", description:"Doe alimentos e participe das ações sociais.", href:"eventos.html" }
+      ];
+    }
+    function formatDate(iso){ const d=new Date(iso); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"}); }
+
+    const eventsSlides = document.getElementById("eventsSlides");
+    (function renderEvents(){
+      const list = getEvents();
+      eventsSlides.innerHTML = "";
+      list.forEach((ev, i) => {
+        const item = document.createElement("div");
+        item.className = "carousel-item" + (i===0 ? " active" : "");
+        item.setAttribute("data-bs-interval","5000");
+        const href = ev.href || "eventos.html";
+        item.innerHTML = `
+          <div class="card events-card" data-href="${href}">
+            <div class="card-body p-4 p-md-5">
+              <div class="slide-progress"><div class="bar"></div></div>
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                <span class="event-pill"><i class="bi bi-calendar-event"></i> ${formatDate(ev.dateISO)}</span>
+                <a href="${href}" class="btn btn-light btn-sm ms-auto">Detalhes</a>
+              </div>
+              <h2 class="h3 fw-bold mb-2">${ev.title}</h2>
+              <p class="mb-0">${ev.description||""}</p>
+            </div>
+          </div>`;
+        eventsSlides.appendChild(item);
+      });
+    })();
+
+    // Torna todo o card do banner clicável (respeitando o link interno)
+    document.addEventListener('click', (e)=>{
+      const card = e.target.closest('.events-card');
+      if(card && !e.target.closest('a, button')){
+        const href = card.getAttribute('data-href') || 'eventos.html';
+        window.location.href = href;
+      }
+    });
+
+    // Reinicia barra de progresso quando muda o slide
+    function restartEventProgress(){
+      document.querySelectorAll('#eventsCarousel .carousel-item .bar').forEach(b=>{
+        b.style.transition = 'none'; b.style.width = '0%'; void b.offsetWidth;
+        b.style.transition = 'width 5s linear'; b.style.width = '100%';
+      });
+    }
+    const eventsCarouselEl = document.getElementById('eventsCarousel');
+    eventsCarouselEl.addEventListener('slid.bs.carousel', restartEventProgress);
+    eventsCarouselEl.addEventListener('slide.bs.carousel', restartEventProgress);
+    restartEventProgress(); // start
+
+    /* ===== Carteirinha ===== */
+    function getOrCreateMemberNumber(){
+      try{
+        let n = localStorage.getItem("memberNumber");
+        if(!n){
+          const p1 = String(Math.floor(Math.random()*1e7)).padStart(7,"0");
+          const p2 = String(Math.floor(Math.random()*1e4)).padStart(4,"0");
+          n = `${p1}-${p2}`; localStorage.setItem("memberNumber", n);
+        } return n;
+      }catch{
+        const p1 = String(Math.floor(Math.random()*1e7)).padStart(7,"0");
+        const p2 = String(Math.floor(Math.random()*1e4)).padStart(4,"0");
+        return `${p1}-${p2}`;
+      }
+    }
+    function getValidityMMYYYY(){ const now=new Date(); now.setMonth(now.getMonth()+12); const mm=String(now.getMonth()+1).padStart(2,"0"); return `${mm}/${now.getFullYear()}`; }
+    document.getElementById("idNumber").textContent = getOrCreateMemberNumber();
+    document.getElementById("idValidity").textContent = getValidityMMYYYY();
+
+    /* ===== Convênios (1 por slide, fade a cada 5s) ===== */
+    function getPartners(){
+      try{
+        const local = JSON.parse(localStorage.getItem("convenios"));
+        if (Array.isArray(local) && local.length) return local;
+      }catch{}
+      return [
+        { name:"Clínica Bem-Estar", logo:null, href:"convenios.html" },
+        { name:"Academia TopFit",   logo:null, href:"convenios.html" },
+        { name:"Farmácia Vida+",    logo:null, href:"convenios.html" },
+        { name:"Laboratório Alfa",  logo:null, href:"convenios.html" },
+        { name:"Odonto Sorriso",    logo:null, href:"convenios.html" },
+        { name:"Hotel Central",     logo:null, href:"convenios.html" },
+        { name:"Ótica Vision",      logo:null, href:"convenios.html" },
+        { name:"Clínica Cardio",    logo:null, href:"convenios.html" }
+      ];
+    }
+    function initials(name){ return name.split(/\s+/).map(w=>w[0]).join('').slice(0,3).toUpperCase(); }
+
+    (function renderPartnersOneByOne(){
+      const list = getPartners();
+      const slides = document.getElementById("partnersSlides");
+      slides.innerHTML = "";
+
+      list.forEach((p, idx) => {
+        const item = document.createElement("div");
+        item.className = "carousel-item" + (idx===0 ? " active" : "");
+        item.setAttribute("data-bs-interval", "5000");
+
+        item.innerHTML = `
+          <div class="d-flex flex-column align-items-center justify-content-center" style="min-height:220px;">
+            <a class="logo-card d-block text-center" href="${p.href||'#'}" title="${p.name}" style="width:min(420px, 88vw);">
+              ${p.logo
+                ? `<img class="logo-img" src="${p.logo}" alt="${p.name}">`
+                : `<div class="logo-placeholder">${initials(p.name)}</div>`}
+            </a>
+            <div class="partner-caption">${p.name}</div>
+          </div>`;
+        slides.appendChild(item);
+      });
+    })();
+
+    /* ===== Próximos eventos (abaixo de convênios) ===== */
+    function getUpcoming(list){
+      const now = new Date();
+      // orderna por data e pega os 3 mais próximos a partir de hoje
+      const future = list
+        .filter(ev => !isNaN(new Date(ev.dateISO)) && new Date(ev.dateISO) >= new Date(now.toDateString()))
+        .sort((a,b)=> new Date(a.dateISO)-new Date(b.dateISO))
+        .slice(0,3);
+      return future;
+    }
+
+    (function renderNextEvents(){
+      const list = getEvents();
+      const upcoming = getUpcoming(list);
+      const wrap = document.getElementById('nextEventsList');
+      wrap.innerHTML = "";
+
+      if(!upcoming.length){
+        wrap.innerHTML = `<div class="col-12"><div class="alert alert-light border">Nenhum evento futuro cadastrado no momento.</div></div>`;
+        return;
+      }
+
+      upcoming.forEach(ev=>{
+        const href = ev.href || 'eventos.html';
+        const col = document.createElement('div');
+        col.className = 'col-12 col-md-4';
+        col.innerHTML = `
+          <a href="${href}" class="text-decoration-none text-reset">
+            <div class="next-events-card p-3 h-100">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="date-badge"><i class="bi bi-calendar-event me-1"></i> ${formatDate(ev.dateISO)}</span>
+                <i class="bi bi-arrow-right-short fs-4 text-muted"></i>
+              </div>
+              <h3 class="h6 mb-1">${ev.title}</h3>
+              <p class="small text-muted mb-0">${ev.description || "Saiba mais em detalhes na página de eventos."}</p>
+            </div>
+          </a>`;
+        wrap.appendChild(col);
+      });
+    })();
+
+    /* Aparição suave */
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); observer.unobserve(e.target); }});
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
