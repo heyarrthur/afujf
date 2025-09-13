@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AFUJF – Admin • Convênios</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --g1:#12c26d; --g2:#0ea5a7; --g3:#1366d6;
+      --glass: rgba(255,255,255,.10); --glass-2: rgba(255,255,255,.16);
+      --title:#0c3a62; --muted:#6b82a3;
+    }
+
+    /* Fundo */
+    body{
+      background:
+        radial-gradient(1400px 800px at -10% -10%, #20c07a22, transparent 60%),
+        radial-gradient(1200px 700px at 110% -20%, #0ea5a733, transparent 65%),
+        linear-gradient(180deg, #f7fbff 0%, #eaf3ff 100%);
+    }
+
+    /* ===== Launcher / Navbar ===== */
+    .corner-launcher{
+      position:fixed; top:.75rem; left:.75rem; width:68px; height:68px; border:0; border-radius:35px;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+      display:grid; place-items:center; color:#fff; cursor:pointer; z-index:1061;
+      box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.22);
+      transition:transform .15s, box-shadow .2s, filter .2s, opacity .2s; -webkit-tap-highlight-color:transparent;
+    }
+    .corner-launcher:hover{ transform:translateY(-2px); box-shadow:0 24px 44px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.22); }
+    .corner-launcher.hidden{ opacity:0; transform:translate(-10px,-10px) scale(.96); pointer-events:none; }
+    .af-badge{ width:48px; height:48px; border-radius:50%; object-fit:cover; display:block; box-shadow:0 12px 26px rgba(0,0,0,.35); }
+
+    .offcanvas-afujf{
+      width:340px; color:#fff; border-right:0;
+      background: linear-gradient(180deg, var(--g1) 0%, var(--g2) 40%, var(--g3) 100%);
+      box-shadow: 6px 0 26px rgba(0,0,0,.35);
+    }
+    .offcanvas-afujf .offcanvas-header{ border-bottom:1px solid rgba(255,255,255,.15); }
+    .brand-badge-img{ width:44px; height:44px; border-radius:50%; object-fit:cover; box-shadow:0 8px 18px rgba(0,0,0,.35); }
+    .brand-title-img{ max-height:28px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+
+    .menu-list{ list-style:none; margin:0; padding:.25rem 0; }
+    .menu-link{
+      display:flex; align-items:center; gap:.9rem; color:#fff; text-decoration:none;
+      padding:.9rem 1rem; border-radius:14px; margin:.2rem 0;
+      transition: background .2s, transform .15s, box-shadow .2s;
+    }
+    .menu-link:hover{ background:var(--glass); transform:translateX(3px); box-shadow:0 10px 20px rgba(0,0,0,.25); }
+    .menu-link.active{ background:var(--glass-2); box-shadow:0 14px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25); }
+    .menu-divider{ height:1px; background:rgba(255,255,255,.18); margin:.75rem 0 1rem; border-radius:2px; }
+
+    .admin-block{
+      border-top:1px solid rgba(255,255,255,.14); margin-top:1rem; padding-top:1rem;
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+    }
+    .admin-badge{
+      width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:#fff;
+      background: linear-gradient(150deg,var(--g3),#0e8bd6); box-shadow:0 8px 18px rgba(0,0,0,.28);
+    }
+
+    /* ===== Conteúdo ===== */
+    main{ padding:110px 16px 56px; }
+    .container-narrow{ max-width:1200px; margin:0 auto; }
+
+    .hero{ display:flex; align-items:flex-end; gap:14px; margin-bottom:18px; }
+    .hero-chip{
+      width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-size:1.35rem;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+      box-shadow:0 12px 26px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+    }
+    .hero h1{ font-size: clamp(1.2rem, 4vw, 1.9rem); margin:0; color:#0c3a62; font-weight:900; }
+    .hero small{ color:#6a86a7; display:block; margin-top:2px; }
+
+    /* KPIs / Toolbar / Cards */
+    .kpi-grid{ display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:14px; }
+    @media (min-width:768px){ .kpi-grid{ grid-template-columns: repeat(3, 1fr); } }
+    .kpi{
+      background:#ffffffd9; backdrop-filter: blur(6px);
+      border-radius:16px; padding:14px; box-shadow:0 18px 34px rgba(12,52,100,.10);
+      display:flex; align-items:center; gap:12px;
+    }
+    .kpi-ico{
+      width:44px; height:44px; border-radius:12px; display:grid; place-items:center; color:#fff; font-size:1.2rem;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+      box-shadow:0 10px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+      animation:pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse{ 0%,100%{ transform:scale(1)} 50%{ transform:scale(1.06)} }
+    .kpi-val{ font-weight:900; color:#103a63; font-size:1.2rem; }
+    .kpi-sub{ color:#6a86a7; font-size:.92rem; margin-top:-2px; }
+
+    .toolbar{
+      background:#ffffffd9; backdrop-filter: blur(6px);
+      border-radius:16px; padding:12px; box-shadow:0 18px 36px rgba(12,52,100,.10);
+      display:grid; gap:10px; grid-template-columns:1fr; margin-bottom:14px;
+    }
+    @media (min-width:992px){
+      .toolbar{ grid-template-columns:1.2fr 220px 200px auto auto; align-items:center; }
+    }
+    .search-input{ border:1px solid #d8e6f8; border-radius:10px; padding:.65rem .8rem; }
+    .btn-grad{
+      border:0; border-radius:12px; padding:.6rem .9rem; font-weight:800;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3)); color:#fff;
+      box-shadow:0 12px 24px rgba(0,0,0,.18);
+    }
+    .btn-ghost{ border:1px solid #d0daea; background:#fff; color:#24496f; border-radius:12px; padding:.6rem .9rem; font-weight:700; }
+
+    /* Tabela */
+    .cardx{ background:#fff; border-radius:18px; padding:14px; box-shadow:0 18px 42px rgba(14,56,110,.12); border:1px solid #e7f0fb; }
+    .table thead th{ border-bottom:1px solid #e8f0ff; color:#173b61; }
+    .pill{ border-radius:999px; padding:.25rem .6rem; font-weight:800; }
+    .pill.ok{ background:#e8fff1; color:#18794e; border:1px solid #c8ffd9; }
+    .pill.bad{ background:#ffe3e3; color:#9a1f1f; border:1px solid #ffc4c4; }
+
+    .logo-cell{
+      width:44px; height:44px; border-radius:10px; overflow:hidden; display:grid; place-items:center;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3)); color:#fff; font-weight:900;
+      box-shadow:0 10px 18px rgba(0,0,0,.12);
+    }
+    .logo-cell img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Modal */
+    .modal-gradient{ background: linear-gradient(180deg, #f7fbff 0%, #ecf4ff 100%); }
+    .logo-drop{
+      border:2px dashed #cfe0f3; border-radius:14px; padding:10px; text-align:center; cursor:pointer; transition:.15s;
+      background:#fff;
+    }
+    .logo-drop:hover{ background:#f6fbff; }
+    .logo-preview{ width:62px; height:62px; border-radius:12px; overflow:hidden; display:grid; place-items:center; margin-right:8px; background:#eff6ff; }
+    .logo-preview img{ width:100%; height:100%; object-fit:cover; display:block; }
+  </style>
+</head>
+<body>
+
+  <!-- Botão fixo -->
+  <button id="af-launcher" class="corner-launcher" type="button" aria-label="Abrir menu">
+    <img src="af-badge.png" alt="AFUJF" class="af-badge">
+  </button>
+
+  <!-- Navbar lateral (ADMIN) -->
+  <div class="offcanvas offcanvas-start offcanvas-afujf" tabindex="-1" id="menuAFUJF" aria-labelledby="menuAFUJFLabel">
+    <div class="offcanvas-header align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <img src="af-badge.png" alt="AFUJF" class="brand-badge-img">
+        <div>
+          <img id="menuAFUJFLabel" src="afujf.png" alt="AFUJF" class="brand-title-img">
+          <small class="opacity-75">Administração</small>
+        </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column">
+      <ul class="menu-list">
+        <li><a class="menu-link" href="admin-home.html"><i class="bi bi-speedometer2"></i> Home</a></li>
+        <li><a class="menu-link" href="admin-associados.html"><i class="bi bi-people"></i> Associados</a></li>
+        <li><a class="menu-link active" href="admin-convenios.html"><i class="bi bi-bag-heart"></i> Convênios</a></li>
+        <li><a class="menu-link" href="admin-eventos.html"><i class="bi bi-calendar-event"></i> Eventos</a></li>
+        <li><a class="menu-link" href="admin-faturamento.html"><i class="bi bi-receipt"></i> Faturamento</a></li>
+      </ul>
+
+      <div class="menu-divider"></div>
+      <div class="mt-auto admin-block">
+        <div class="d-flex align-items-center gap-2">
+          <div class="admin-badge"><i class="bi bi-shield-lock"></i></div>
+          <div>
+            <div class="fw-semibold">Administrador</div>
+            <small class="opacity-75">Painel AFUJF</small>
+          </div>
+        </div>
+        <button class="btn btn-outline-light btn-sm px-3" type="button">
+          <i class="bi bi-box-arrow-right me-1"></i> Sair
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <main class="container-narrow">
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-chip"><i class="bi bi-bag-heart"></i></div>
+      <div>
+        <h1>Convênios</h1>
+        <small>Cadastre, edite e gerencie os parceiros credenciados.</small>
+      </div>
+    </header>
+
+    <!-- KPIs -->
+    <section class="kpi-grid" id="kpis">
+      <div class="kpi"><div class="kpi-ico"><i class="bi bi-buildings"></i></div><div><div class="kpi-val" id="kpiTotal">0</div><div class="kpi-sub">Total de convênios</div></div></div>
+      <div class="kpi"><div class="kpi-ico"><i class="bi bi-check2-circle"></i></div><div><div class="kpi-val" id="kpiAtivos">0</div><div class="kpi-sub">Ativos</div></div></div>
+      <div class="kpi"><div class="kpi-ico"><i class="bi bi-pause-circle"></i></div><div><div class="kpi-val" id="kpiInativos">0</div><div class="kpi-sub">Inativos</div></div></div>
+    </section>
+
+    <!-- FERRAMENTAS -->
+    <section class="toolbar">
+      <input id="busca" type="search" class="form-control search-input" placeholder="Buscar por nome, cidade, contato…" />
+      <select id="catFiltro" class="form-select">
+        <option value="">Todas as categorias</option>
+      </select>
+      <select id="statusFiltro" class="form-select">
+        <option value="">Todos os status</option>
+        <option value="Ativo">Ativo</option>
+        <option value="Inativo">Inativo</option>
+      </select>
+      <button id="btnNovo" class="btn-grad"><i class="bi bi-plus-lg me-1"></i> Novo convênio</button>
+      <button id="btnLimpar" class="btn-ghost"><i class="bi bi-eraser me-1"></i> Limpar filtros</button>
+    </section>
+
+    <!-- LISTA -->
+    <section class="cardx">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Logo</th>
+              <th>Nome</th>
+              <th>Categoria</th>
+              <th>Desconto</th>
+              <th class="d-none d-md-table-cell">Cidade/UF</th>
+              <th>Status</th>
+              <th class="text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: ADD/EDIT -->
+  <div class="modal fade" id="modalForm" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content modal-gradient">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle"><i class="bi bi-bag-plus me-2"></i>Novo convênio</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12 d-flex align-items-center">
+              <div class="logo-preview me-2" id="logoPrev"><i class="bi bi-image text-muted"></i></div>
+              <div class="flex-grow-1">
+                <div id="logoDrop" class="logo-drop">
+                  <input type="file" id="logoInput" accept="image/*" class="d-none">
+                  <span class="small text-muted"><i class="bi bi-upload me-1"></i>Envie o logo (PNG/JPG) – clique aqui</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-7">
+              <label class="form-label">Nome do parceiro *</label>
+              <input id="fNome" class="form-control" placeholder="Ex.: Ótica Visão+">
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Categoria *</label>
+              <select id="fCategoria" class="form-select">
+                <option value="Saúde">Saúde</option>
+                <option value="Educação">Educação</option>
+                <option value="Lazer">Lazer</option>
+                <option value="Comércio">Comércio</option>
+                <option value="Serviços">Serviços</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Desconto</label>
+              <input id="fDesconto" class="form-control" placeholder="Ex.: 15% em lentes">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Cidade/UF</label>
+              <input id="fCidade" class="form-control" placeholder="Juiz de Fora/MG">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Status</label>
+              <select id="fStatus" class="form-select">
+                <option>Ativo</option>
+                <option>Inativo</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Contato</label>
+              <input id="fContato" class="form-control" placeholder="(32) 99999-0000">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Site/Link</label>
+              <input id="fSite" class="form-control" placeholder="https://site.com.br">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Observações</label>
+              <textarea id="fObs" class="form-control" rows="3" placeholder="Regras do desconto, horários, restrições..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="saveConvenio" class="btn btn-success">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Remover -->
+  <div class="modal fade" id="modalDel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-gradient">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Remover convênio</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          Tem certeza que deseja remover o convênio <strong id="delNome">—</strong>?
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmDel" class="btn btn-danger">Remover</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1080">
+    <div id="toastOK" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">Ação concluída.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (() => {
+      /* ===== Offcanvas ===== */
+      const launcher = document.getElementById('af-launcher');
+      const offEl = document.getElementById('menuAFUJF');
+      const off = bootstrap.Offcanvas.getOrCreateInstance(offEl, { backdrop:true, scroll:true, keyboard:true });
+      launcher.addEventListener('click', e => { e.preventDefault(); off.toggle(); });
+      offEl.addEventListener('show.bs.offcanvas',  () => launcher.classList.add('hidden'));
+      offEl.addEventListener('hidden.bs.offcanvas', () => launcher.classList.remove('hidden'));
+      document.querySelectorAll('.menu-link').forEach(a => a.addEventListener('click', () => off.hide()));
+
+      /* ===== Dados mock ===== */
+      let seq = 2000;
+      let convenios = [
+        {id:++seq, nome:'Ótica Visão+', categoria:'Comércio', desconto:'15% em lentes', cidade:'Juiz de Fora/MG', status:'Ativo',   contato:'(32) 99999-1111', site:'https://visao.com', obs:'Desconto não cumulativo.', logo:null},
+        {id:++seq, nome:'Academia Vida', categoria:'Lazer',    desconto:'10% + matrícula grátis', cidade:'JF/MG',          status:'Ativo',   contato:'(32) 98888-2222', site:'',                 obs:'Somente plano anual.', logo:null},
+        {id:++seq, nome:'Colégio Saber', categoria:'Educação', desconto:'5% mensalidade', cidade:'JF/MG',          status:'Inativo', contato:'(32) 97777-3333', site:'https://colegio.com', obs:'Sujeito a vagas.',   logo:null},
+        {id:++seq, nome:'Clínica Sorriso',categoria:'Saúde',   desconto:'Avaliação grátis', cidade:'JF/MG',        status:'Ativo',   contato:'(32) 96666-4444', site:'',                 obs:'—',                 logo:null},
+      ];
+
+      /* ===== Refs & utils ===== */
+      const money = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      const toast = new bootstrap.Toast(document.getElementById('toastOK'), { delay: 2000 });
+      const tbody = document.getElementById('tbody');
+      const busca = document.getElementById('busca');
+      const catFiltro = document.getElementById('catFiltro');
+      const statusFiltro = document.getElementById('statusFiltro');
+      const btnNovo = document.getElementById('btnNovo');
+      const btnLimpar = document.getElementById('btnLimpar');
+
+      const modalForm = new bootstrap.Modal(document.getElementById('modalForm'));
+      const modalDel  = new bootstrap.Modal(document.getElementById('modalDel'));
+
+      // Form fields
+      const fNome = document.getElementById('fNome');
+      const fCategoria = document.getElementById('fCategoria');
+      const fDesconto = document.getElementById('fDesconto');
+      const fCidade = document.getElementById('fCidade');
+      const fStatus = document.getElementById('fStatus');
+      const fContato = document.getElementById('fContato');
+      const fSite = document.getElementById('fSite');
+      const fObs = document.getElementById('fObs');
+      const logoInput = document.getElementById('logoInput');
+      const logoDrop = document.getElementById('logoDrop');
+      const logoPrev = document.getElementById('logoPrev');
+      const modalTitle = document.getElementById('modalTitle');
+
+      let editingId = null;
+      let delId = null;
+
+      function initials(s){ return (s||'').trim().charAt(0).toUpperCase() || '?'; }
+
+      function updateKPIs(){
+        const total = convenios.length;
+        const ativos = convenios.filter(c=>c.status==='Ativo').length;
+        const inativos = total - ativos;
+        document.getElementById('kpiTotal').textContent = total.toLocaleString('pt-BR');
+        document.getElementById('kpiAtivos').textContent = ativos.toLocaleString('pt-BR');
+        document.getElementById('kpiInativos').textContent = inativos.toLocaleString('pt-BR');
+      }
+
+      function populateCats(){
+        const cats = [...new Set(convenios.map(c=>c.categoria))].sort();
+        catFiltro.innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c=>`<option>${c}</option>`).join('');
+      }
+
+      function render(){
+        const q = busca.value.trim().toLowerCase();
+        const cat = catFiltro.value;
+        const st = statusFiltro.value;
+
+        let list = convenios.filter(c => {
+          const txt = `${c.nome} ${c.cidade||''} ${c.contato||''} ${c.site||''}`.toLowerCase();
+          const okQ = !q || txt.includes(q);
+          const okC = !cat || c.categoria===cat;
+          const okS = !st || c.status===st;
+          return okQ && okC && okS;
+        });
+
+        tbody.innerHTML = '';
+        list.forEach(c => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <div class="logo-cell">${c.logo ? `<img src="${c.logo}" alt="logo">` : initials(c.nome)}</div>
+            </td>
+            <td>
+              <div class="fw-bold">${c.nome}</div>
+              <div class="text-muted small">${c.site ? `<i class="bi bi-link-45deg"></i> ${c.site}` : (c.contato||'')}</div>
+            </td>
+            <td>${c.categoria||'-'}</td>
+            <td>${c.desconto||'-'}</td>
+            <td class="d-none d-md-table-cell">${c.cidade||'-'}</td>
+            <td><span class="pill ${c.status==='Ativo'?'ok':'bad'}" data-role="toggle" data-id="${c.id}" style="cursor:pointer">${c.status}</span></td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary me-1" data-role="edit" data-id="${c.id}"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-sm btn-outline-danger" data-role="del" data-id="${c.id}"><i class="bi bi-trash"></i></button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        updateKPIs();
+      }
+
+      /* ===== Ações de filtro/busca ===== */
+      ['input','change'].forEach(evt=>{
+        busca.addEventListener(evt, render);
+        catFiltro.addEventListener(evt, render);
+        statusFiltro.addEventListener(evt, render);
+      });
+      btnLimpar.addEventListener('click', ()=>{
+        busca.value=''; catFiltro.value=''; statusFiltro.value=''; render();
+      });
+
+      /* ===== Novo / Editar ===== */
+      function resetForm(){
+        editingId = null;
+        fNome.value=''; fCategoria.value='Saúde'; fDesconto.value=''; fCidade.value='';
+        fStatus.value='Ativo'; fContato.value=''; fSite.value=''; fObs.value='';
+        logoInput.value=''; logoPrev.innerHTML = '<i class="bi bi-image text-muted"></i>';
+      }
+      btnNovo.addEventListener('click', ()=>{
+        resetForm();
+        modalTitle.innerHTML = '<i class="bi bi-bag-plus me-2"></i>Novo convênio';
+        modalForm.show();
+      });
+
+      logoDrop.addEventListener('click', ()=> logoInput.click());
+      logoInput.addEventListener('change', ()=>{
+        const f = logoInput.files[0]; if(!f) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = document.createElement('img');
+          img.src = reader.result; logoPrev.innerHTML=''; logoPrev.appendChild(img);
+        };
+        reader.readAsDataURL(f);
+      });
+
+      document.getElementById('saveConvenio').addEventListener('click', ()=>{
+        const nome = fNome.value.trim();
+        if(!nome){ alert('Informe o nome do parceiro.'); return; }
+        const dataUrl = logoPrev.querySelector('img')?.src || null;
+        const item = {
+          id: editingId ?? ++seq,
+          nome, categoria:fCategoria.value, desconto:fDesconto.value, cidade:fCidade.value,
+          status:fStatus.value, contato:fContato.value, site:fSite.value, obs:fObs.value, logo:dataUrl
+        };
+        if(editingId){
+          const ix = convenios.findIndex(x=>x.id===editingId);
+          if(ix>=0) convenios[ix] = item;
+          document.querySelector('#toastOK .toast-body').textContent = 'Convênio atualizado.';
+        }else{
+          convenios.push(item);
+          document.querySelector('#toastOK .toast-body').textContent = 'Convênio adicionado.';
+        }
+        modalForm.hide(); render(); toast.show();
+      });
+
+      /* ===== Ações da tabela ===== */
+      tbody.addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-role]');
+        if(!btn) return;
+        const id = Number(btn.dataset.id);
+        const idx = convenios.findIndex(c=>c.id===id);
+        if(idx<0) return;
+
+        if(btn.dataset.role==='toggle'){
+          convenios[idx].status = convenios[idx].status==='Ativo' ? 'Inativo' : 'Ativo';
+          render();
+          document.querySelector('#toastOK .toast-body').textContent = 'Status atualizado.';
+          toast.show();
+        }
+
+        if(btn.dataset.role==='edit'){
+          const c = convenios[idx];
+          editingId = c.id;
+          modalTitle.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Editar convênio';
+          fNome.value = c.nome||''; fCategoria.value = c.categoria||'Saúde'; fDesconto.value = c.desconto||'';
+          fCidade.value = c.cidade||''; fStatus.value = c.status||'Ativo'; fContato.value = c.contato||'';
+          fSite.value = c.site||''; fObs.value = c.obs||'';
+          logoPrev.innerHTML = c.logo ? `<img src="${c.logo}" alt="logo">` : '<i class="bi bi-image text-muted"></i>';
+          modalForm.show();
+        }
+
+        if(btn.dataset.role==='del'){
+          delId = id;
+          document.getElementById('delNome').textContent = convenios[idx].nome;
+          modalDel.show();
+        }
+      });
+
+      document.getElementById('confirmDel').addEventListener('click', ()=>{
+        if(delId==null) return;
+        convenios = convenios.filter(c=>c.id!==delId);
+        modalDel.hide(); render();
+        document.querySelector('#toastOK .toast-body').textContent = 'Convênio removido.';
+        toast.show();
+        delId = null;
+      });
+
+      /* Init */
+      populateCats(); render();
+    })();
+  </script>
+</body>
+</html>

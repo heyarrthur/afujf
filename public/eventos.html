@@ -1,590 +1,476 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Eventos • AFUJF</title>
-  <meta name="theme-color" content="#0068A9"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AFUJF – Nossos Eventos</title>
 
   <!-- Bootstrap + Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
   <style>
     :root{
-      --grad-a:#008B5C; --grad-b:#0068A9;
-      --white:#FFF; --black:#353535;
-      --success:#009420; --error:#D00000;
-      --radius:18px;
-      --shadow-sm:0 6px 14px rgba(0,0,0,.08);
-      --shadow-md:0 14px 28px rgba(0,0,0,.12), 0 6px 14px rgba(0,0,0,.08);
-      --shadow-lg:0 28px 60px rgba(0,0,0,.16), 0 12px 24px rgba(0,0,0,.10);
+      --g1:#12c26d; --g2:#0ea5a7; --g3:#1366d6;
+      --ink:#eef6ff; --glass:rgba(255,255,255,.10); --glass-2:rgba(255,255,255,.16);
+      --title:#0c3a62; --muted:#6b82a3;
     }
 
+    /* Fundo */
     body{
-      margin:0; color:var(--black);
       background:
-        radial-gradient(55% 70% at 10% -10%, rgba(0,139,92,.12), transparent 60%),
-        radial-gradient(45% 60% at 120% 10%, rgba(0,104,169,.12), transparent 60%),
-        linear-gradient(#f7fafc, #edf2f7);
-      min-height:100vh; overflow-x:hidden;
+        radial-gradient(1400px 800px at -10% -10%, #20c07a22, transparent 60%),
+        radial-gradient(1200px 700px at 110% -20%, #0ea5a733, transparent 65%),
+        linear-gradient(180deg, #f7fbff 0%, #eaf3ff 100%);
     }
 
-    /* === Botão/logo fixo (borda embaixo/direita) === */
-    .brand-square{
-      position: fixed; top:0; left:0; width:64px; height:64px; padding:0; border:0;
-      background:#0b0b0b; border-radius:0 0 var(--radius) 0; overflow:hidden; z-index:1100;
-      box-shadow: 10px 16px 24px rgba(0,0,0,.28);
+    /* ===== Launcher / Navbar ===== */
+    .corner-launcher{
+      position:fixed; top:.75rem; left:.75rem; width:68px; height:68px; border:0; border-radius:35px;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+      display:grid; place-items:center; color:#fff; cursor:pointer; z-index:1061;
+      box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.22);
+      transition:transform .15s, box-shadow .2s, filter .2s, opacity .2s; -webkit-tap-highlight-color:transparent;
     }
-    .brand-square img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .brand-square::after{
-      content:""; position:absolute; inset:0;
-      border:2px solid rgba(255,255,255,.14); border-top:0; border-left:0;
-      border-bottom-right-radius:var(--radius); pointer-events:none;
-      box-shadow: 6px 10px 18px rgba(0,0,0,.25);
-    }
+    .corner-launcher:hover{ transform:translateY(-2px); box-shadow:0 24px 44px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.22); }
+    .corner-launcher.hidden{ opacity:0; transform:translate(-10px,-10px) scale(.96); pointer-events:none; }
+    .af-badge{ width:48px; height:48px; border-radius:50%; object-fit:cover; display:block; box-shadow:0 12px 26px rgba(0,0,0,.35); }
 
-    /* === HERO === */
-    .page-hero{
-      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
-      color:#fff; padding: 88px 0 42px; position:relative; overflow:hidden;
-      box-shadow: inset 0 -30px 60px rgba(0,0,0,.14);
+    .offcanvas-afujf{
+      width:340px; color:#fff; border-right:0;
+      background:linear-gradient(180deg,var(--g1) 0%, var(--g2) 40%, var(--g3) 100%);
+      box-shadow:6px 0 26px rgba(0,0,0,.35);
     }
-    .page-hero::before, .page-hero::after{
-      content:""; position:absolute; border-radius:50%; filter: blur(2px); opacity:.22; pointer-events:none;
+    .offcanvas-afujf .offcanvas-header{ border-bottom:1px solid rgba(255,255,255,.15); }
+    .brand-badge-img{ width:44px; height:44px; border-radius:50%; object-fit:cover; box-shadow:0 8px 18px rgba(0,0,0,.35); }
+    .brand-title-img{ max-height:28px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+    .menu-list{ list-style:none; margin:0; padding:.25rem 0; }
+    .menu-link{
+      display:flex; align-items:center; gap:.9rem; color:#fff; text-decoration:none;
+      padding:.9rem 1rem; border-radius:14px; margin:.2rem 0; transition: background .2s, transform .15s, box-shadow .2s;
     }
-    .page-hero::before{ width:420px; height:420px; left:-12%; top:-22%; background: radial-gradient(closest-side,#00b07a,transparent 70%); }
-    .page-hero::after { width:520px; height:520px; right:-18%; bottom:-28%; background: radial-gradient(closest-side,#0b86d0,transparent 70%); }
-    .hero-sep{ height:10px; background:linear-gradient(90deg,rgba(255,255,255,.5),rgba(255,255,255,0)); mask: linear-gradient(#000, transparent); }
+    .menu-link:hover{ background:var(--glass); transform:translateX(3px); box-shadow:0 10px 20px rgba(0,0,0,.25); }
+    .menu-link.active{ background:var(--glass-2); box-shadow:0 14px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25); }
+    .menu-divider{ height:1px; background:rgba(255,255,255,.18); margin:.75rem 0 1rem; border-radius:2px; }
 
-    /* === CONTROLES (sticky + glass) === */
-    .controls{ margin-top:-20px; }
-    .filter-card{
-      background: rgba(255,255,255,.8); border:0; border-radius:18px; box-shadow: var(--shadow-md);
-      backdrop-filter: blur(8px);
-      position: sticky; top: 16px; z-index: 20;
-    }
-    .input-group:focus-within{ box-shadow: 0 0 0 .2rem rgba(0,104,169,.15); border-radius: 10px; }
-    .chip{
-      display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .65rem;
-      border-radius:999px; background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.06);
-      font-size:.9rem;
-    }
+    /* ===== Estrutura ===== */
+    main{ padding:110px 16px 56px; }
+    .container-narrow{ max-width:1100px; margin:0 auto; }
 
-    /* === GRID DE EVENTOS === */
+    /* Hero */
+    .hero{ display:flex; align-items:flex-end; gap:14px; margin-bottom:18px; }
+    .hero-chip{
+      width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-size:1.35rem;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+      box-shadow:0 12px 26px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+    }
+    .hero h1{ font-size: clamp(1.2rem, 4vw, 1.8rem); margin:0; color:#0c3a62; font-weight:900; }
+    .hero small{ color:var(--muted); display:block; margin-top:2px; }
+
+    /* Barra de filtros */
+    .filter-bar{
+      background:#ffffffd9; backdrop-filter: blur(6px);
+      border-radius:16px; padding:12px; box-shadow:0 18px 36px rgba(12,52,100,.10);
+      display:grid; gap:10px; grid-template-columns:1fr; margin-bottom:16px;
+    }
+    @media (min-width: 992px){
+      .filter-bar{ grid-template-columns: 1.3fr 200px 200px 200px 200px; align-items:center; }
+    }
+    .search-input{ border:1px solid #d8e6f8; border-radius:10px; padding:.65rem .8rem; }
+    .form-select{ border:1px solid #d8e6f8; }
+
+    /* Cards de evento (reutiliza o estilo da home) */
     .event-card{
-      position:relative; border:0; border-radius:18px; background:#fff; box-shadow: var(--shadow-md);
-      overflow:hidden; height:100%;
-      transition: transform .2s ease, box-shadow .25s ease, filter .2s ease;
+      width:100%; border-radius:20px; background:#fff; overflow:hidden;
+      box-shadow: 0 18px 42px rgba(14, 56, 110, .15);
+      transition: transform .18s ease, box-shadow .22s ease;
+      height:100%;
     }
-    .event-card:hover{ transform: translateY(-4px); box-shadow: var(--shadow-lg); filter: brightness(1.01); }
-    .event-card::before{
-      content:""; position:absolute; inset:-1px; border-radius:20px; padding:1px;
-      background: linear-gradient(120deg, rgba(0,139,92,.28), rgba(0,104,169,.28), rgba(255,255,255,.28));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
-      animation: hue 8s linear infinite;
-    }
-    @keyframes hue{ 0%{ filter:hue-rotate(0deg)} 100%{filter:hue-rotate(360deg)} }
+    .event-card:hover{ transform: translateY(-2px); box-shadow: 0 22px 54px rgba(14, 56, 110, .18); }
 
-    .banner{
-      height:180px; position:relative; overflow:hidden; background:linear-gradient(135deg, var(--grad-a), var(--grad-b));
-      display:flex; align-items:center; justify-content:center;
-    }
-    .banner img{ width:100%; height:100%; object-fit: cover; filter: saturate(1.05) contrast(1.02); }
-    .banner::after{
-      content:""; position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.05));
+    .event-banner{
+      height:140px; background:
+        radial-gradient(800px 280px at -10% -20%, #10b981, transparent 60%),
+        linear-gradient(160deg, var(--g1) 0%, var(--g2) 40%, var(--g3) 100%);
+      position:relative;
     }
     .date-pill{
-      position:absolute; left:14px; bottom:14px; z-index:2;
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      width:64px; height:64px; border-radius:14px; color:#fff;
-      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
-      box-shadow: var(--shadow-sm);
-      text-shadow: 0 1px 2px rgba(0,0,0,.3);
-      font-weight:800;
+      position:absolute; left:16px; top:16px;
+      width:64px; height:64px; border-radius:16px; display:grid; place-items:center;
+      color:#fff; font-weight:800;
+      background: linear-gradient(150deg,var(--g3),#0e8bd6);
+      box-shadow: 0 12px 28px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25);
+      text-align:center; line-height:1.05;
     }
-    .date-pill .day{ font-size:1.25rem; line-height:1; }
-    .date-pill .mon{ font-size:.8rem; opacity:.9; text-transform: uppercase; }
+    .date-pill .day{ font-size: 26px; }
+    .date-pill .mon{ font-size: 12px; letter-spacing:.8px; opacity:.9 }
 
-    .badge-free{ background: rgba(0,148,32,.1); color:var(--success); border-radius:10px; padding:.25rem .55rem; font-weight:700; }
-    .badge-paid{ background: rgba(208,0,0,.1); color:var(--error); border-radius:10px; padding:.25rem .55rem; font-weight:700; }
-    .tag{ display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .55rem; border-radius:999px; background:rgba(0,0,0,.05); font-size:.8rem; }
+    .event-body{ padding: 16px; }
+    .event-title{ font-weight: 800; color:#153a5a; }
+    .event-loc{ color:#648; opacity:.9; display:flex; align-items:center; gap:.45rem; margin-top:.15rem; }
+    .chips{ display:flex; gap:.5rem; flex-wrap:wrap; margin: 10px 0; }
+    .chip{ border-radius:999px; padding:.35rem .65rem; font-weight:700; font-size:.9rem; display:inline-flex; gap:.35rem; align-items:center; }
+    .chip.tag{ background:#f1f5ff; color:#234f84; border:1px solid #d9e6ff; }
+    .chip.pay{ background:#ffe6e6; color:#a42323; border:1px solid #ffc9c9; }
+    .chip.free{ background:#e7ffe9; color:#228f41; border:1px solid #b9ffbf; }
+    .chip.time{ background:#eef3f9; color:#1d3858; border:1px solid #d6e4f5; gap:.5rem; }
 
-    .btn-gradient{
-      color:#fff; border:none; border-radius:12px;
-      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
-      box-shadow: var(--shadow-sm);
-      transition: transform .08s ease, box-shadow .18s ease, filter .18s ease;
+    .event-actions{ display:flex; gap:.7rem; align-items:center; margin-top: 10px; }
+    .btn-details{
+      flex:1; border:1px solid #d0daea; background:#fff; color:#24496f; border-radius:10px; padding:.6rem .9rem; font-weight:700;
+      box-shadow: 0 4px 10px rgba(0,0,0,.06);
     }
-    .btn-gradient:hover{ transform: translateY(-1px); box-shadow: var(--shadow-md); filter: brightness(1.03); }
-
-    /* Skeleton */
-    .skeleton .sk{ background: #e9ecef; border-radius:10px; position:relative; overflow:hidden; }
-    .skeleton .sk::after{
-      content:""; position:absolute; inset:0;
-      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0));
-      transform: translateX(-100%); animation: shine 1.2s infinite;
+    .btn-inscrever{
+      border:0; border-radius:999px; padding:.6rem 1rem; font-weight:800;
+      background: linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3)); color:#fff;
+      box-shadow:0 12px 24px rgba(0,0,0,.18); white-space:nowrap;
     }
-    @keyframes shine{ 100%{ transform: translateX(100%) } }
 
-    /* Reveal */
-    .reveal{ opacity:0; transform: translateY(14px) scale(.98); }
-    .reveal.in{ opacity:1; transform:none; transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1.05); }
-
-    /* Offcanvas */
-    .offcanvas{
-      --bs-offcanvas-width: 320px;
-      background: linear-gradient(135deg, rgba(0,139,92,.98), rgba(0,104,169,.98));
-      color:#fff; backdrop-filter: blur(8px);
+    /* Empty */
+    .empty{
+      background:#ffffffcc; border:1px dashed #cfe0f3; border-radius:16px; padding:22px; text-align:center; color:#5a7393;
     }
-    .menu-logo{ width:36px; height:36px; object-fit:cover; border-radius:8px; }
-    .menu-link{ display:flex; align-items:center; gap:.65rem; padding:.8rem 1rem; border-radius:12px; color:#fff; text-decoration:none; }
-    .menu-link:hover{ background: rgba(255,255,255,.10) }
+
+    /* Modal */
+    .modal-gradient{ background: linear-gradient(180deg, #f7fbff 0%, #ecf4ff 100%); }
   </style>
 </head>
 <body>
 
-  <!-- Botão/menu -->
-  <button class="brand-square" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainMenu" aria-controls="mainMenu" aria-label="Abrir menu">
-    <img src="afujf.png" alt="AFUJF">
+  <!-- Botão fixo (topo-esquerdo) -->
+  <button id="af-launcher" class="corner-launcher" type="button" aria-label="Abrir menu">
+    <img src="af-badge.png" alt="AFUJF" class="af-badge">
   </button>
 
-  <!-- MENU Offcanvas -->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="mainMenu" aria-labelledby="mainMenuLabel">
-    <div class="offcanvas-header">
-      <div class="d-flex align-items-center gap-2">
-        <img class="menu-logo" src="afujf.png" alt="AFUJF">
-        <h5 class="mb-0 fw-semibold" id="mainMenuLabel">AFUJF</h5>
+  <!-- Offcanvas / Navbar lateral -->
+  <div class="offcanvas offcanvas-start offcanvas-afujf" tabindex="-1" id="menuAFUJF" aria-labelledby="menuAFUJFLabel">
+    <div class="offcanvas-header align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <img src="af-badge.png" alt="AFUJF" class="brand-badge-img">
+        <div>
+          <img id="menuAFUJFLabel" src="afujf.png" alt="AFUJF" class="brand-title-img">
+          <small class="opacity-75">Navegação</small>
+        </div>
       </div>
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
     </div>
-    <div class="offcanvas-body">
-      <div class="mb-2 small opacity-75">Navegação</div>
-      <ul class="list-unstyled vstack gap-1">
-        <li><a class="menu-link" href="dashboard.html"><i class="bi bi-house"></i>Dashboard</a></li>
-        <li><a class="menu-link" href="carteirinha.html"><i class="bi bi-person-badge"></i>Minha carteirinha</a></li>
-        <li><a class="menu-link" href="convenios.html"><i class="bi bi-bag-heart"></i>Convênios AFUJF</a></li>
-        <li><a class="menu-link" href="eventos.html"><i class="bi bi-calendar-event"></i>Eventos</a></li>
-        <li id="link-associados" class="d-none"><a class="menu-link" href="associados.html"><i class="bi bi-people-gear"></i>Associados (Admin)</a></li>
+
+    <div class="offcanvas-body d-flex flex-column">
+      <ul class="menu-list">
+        <li><a class="menu-link" href="index.html"><i class="bi bi-house-door"></i> Home</a></li>
+        <li><a class="menu-link" href="carteirinha.html"><i class="bi bi-person-badge"></i> Minha Carteirinha</a></li>
+        <li><a class="menu-link" href="convenios.html"><i class="bi bi-bag-heart"></i> Convênios</a></li>
+        <li><a class="menu-link active" href="eventos.html"><i class="bi bi-calendar-event"></i> Eventos</a></li>
+        <li><a class="menu-link" href="#"><i class="bi bi-receipt"></i> Faturas</a></li>
       </ul>
-      <hr class="border-light opacity-50 my-4">
-      <div class="d-flex align-items-center justify-content-between">
-        <div>
-          <div class="small opacity-75">Usuário</div>
-          <div id="userLabel" class="fw-semibold">Visitante</div>
-        </div>
-        <div class="d-flex gap-2">
-          <a id="btnLogin" href="login.html" class="btn btn-outline-light btn-sm">Entrar</a>
-          <button id="btnLogout" class="btn btn-outline-light btn-sm d-none">Sair</button>
+      <div class="menu-divider"></div>
+      <div class="mt-auto">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-semibold">Usuário</div>
+            <div class="opacity-75">Visitante</div>
+          </div>
+          <button class="btn btn-outline-light px-3" type="button">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- HERO -->
-  <header class="page-hero">
-    <div class="container">
-      <h1 class="display-6 fw-bold mb-1">Eventos</h1>
-      <div class="opacity-75">Fique por dentro dos próximos eventos da AFUJF</div>
-    </div>
-    <div class="hero-sep"></div>
-  </header>
-
-  <!-- CONTROLES -->
-  <section class="controls">
-    <div class="container">
-      <div class="card filter-card p-3 p-md-4 reveal">
-        <div class="row g-2 g-md-3 align-items-center">
-          <div class="col-12 col-md-5">
-            <div class="input-group">
-              <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-              <input id="q" type="search" class="form-control" placeholder="Buscar evento (título, local, categoria)..." autocomplete="off">
-            </div>
-          </div>
-          <div class="col-6 col-md-3">
-            <select id="cat" class="form-select">
-              <option value="">Todas as categorias</option>
-              <!-- categorias via JS -->
-            </select>
-          </div>
-          <div class="col-6 col-md-2">
-            <select id="month" class="form-select">
-              <option value="">Todos os meses</option>
-              <!-- meses via JS -->
-            </select>
-          </div>
-          <div class="col-12 col-md-2 d-flex align-items-center justify-content-between justify-content-md-end gap-2">
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="onlyUpcoming" checked>
-              <label class="form-check-label" for="onlyUpcoming">Somente futuros</label>
-            </div>
-          </div>
-        </div>
-        <div class="row g-2 g-md-3 mt-2 align-items-center">
-          <div class="col-12 col-md-3">
-            <select id="sort" class="form-select">
-              <option value="nearest">Ordenar por: Mais próximos</option>
-              <option value="az">A–Z</option>
-              <option value="recent">Mais recentes (criados)</option>
-            </select>
-          </div>
-          <div class="col-12 col-md d-flex align-items-center gap-2 mt-2 mt-md-0">
-            <span id="count" class="chip"><i class="bi bi-grid-3x3-gap"></i> <span id="countNum">0</span> eventos</span>
-            <span id="activeFilter" class="chip d-none"><i class="bi bi-funnel"></i> <span id="activeFilterText"></span></span>
-            <button id="clearFilters" class="btn btn-outline-secondary btn-sm ms-auto">Limpar filtros</button>
-          </div>
-        </div>
+  <!-- CONTEÚDO -->
+  <main class="container-narrow">
+    <!-- Hero -->
+    <header class="hero">
+      <div class="hero-chip"><i class="bi bi-calendar-event"></i></div>
+      <div>
+        <h1>Nossos Eventos</h1>
+        <small>Participe das atividades e benefícios exclusivos para associados.</small>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <!-- LISTA DE EVENTOS -->
-  <section class="py-4">
-    <div class="container">
-      <!-- Skeleton inicial -->
-      <div id="skeleton" class="row g-3 g-lg-4 skeleton">
-        <template id="sk-template">
-          <div class="col-12 col-md-6 col-xl-4">
-            <div class="event-card">
-              <div class="sk" style="height:180px;"></div>
-              <div class="p-3">
-                <div class="sk" style="height:18px; width:70%; margin-bottom:8px;"></div>
-                <div class="sk" style="height:12px; width:90%; margin-bottom:6px;"></div>
-                <div class="sk" style="height:12px; width:60%; margin-bottom:14px;"></div>
-                <div class="sk" style="height:34px; width:100%;"></div>
-              </div>
-            </div>
-          </div>
-        </template>
+    <!-- Filtros -->
+    <section class="filter-bar">
+      <input id="q" type="search" class="form-control search-input" placeholder="Buscar por nome, local, palavra-chave…" />
+      <select id="cat" class="form-select">
+        <option value="">Todas as categorias</option>
+      </select>
+      <select id="cidade" class="form-select">
+        <option value="">Todas as cidades</option>
+      </select>
+      <select id="status" class="form-select">
+        <option value="">Todos (Pago e Gratuito)</option>
+        <option value="gratuito">Somente Gratuitos</option>
+        <option value="pago">Somente Pagos</option>
+      </select>
+      <select id="quando" class="form-select">
+        <option value="todos">Todas as datas</option>
+        <option value="mes">Este mês</option>
+        <option value="30">Próximos 30 dias</option>
+      </select>
+      <select id="ord" class="form-select mt-2 mt-lg-0">
+        <option value="dataAsc">Ordenar: Data (mais próximo)</option>
+        <option value="dataDesc">Ordenar: Data (mais distante)</option>
+        <option value="nome">Ordenar: Nome (A–Z)</option>
+      </select>
+    </section>
+
+    <!-- Lista de eventos -->
+    <section id="eventsRoot" class="mt-2">
+      <div id="eventsGrid" class="row g-3"></div>
+      <div id="empty" class="empty d-none mt-2">
+        <i class="bi bi-search me-2"></i>Nenhum evento encontrado com os filtros atuais.
       </div>
+    </section>
+  </main>
 
-      <div id="grid" class="row g-3 g-lg-4 reveal d-none"><!-- cards via JS --></div>
-
-      <div id="emptyState" class="alert alert-light border d-none mt-3">
-        Nenhum evento encontrado para os filtros aplicados.
-      </div>
-    </div>
-  </section>
-
-  <!-- MODAL DETALHES -->
-  <div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content" style="border:0;border-radius:18px;box-shadow:var(--shadow-lg);overflow:hidden;">
-        <div class="modal-header" style="background:linear-gradient(135deg, var(--grad-a), var(--grad-b)); color:#fff;">
-          <h5 class="modal-title" id="evTitle">Evento</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+  <!-- Modal Detalhes do Evento -->
+  <div class="modal fade" id="modalEvento" tabindex="-1" aria-labelledby="modalEventoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content modal-gradient">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEventoLabel">Detalhes do evento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
-          <div class="d-flex flex-column flex-md-row gap-3 mb-3">
-            <div class="banner" style="width:100%;max-width:420px;height:200px;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,.06);">
-              <img id="evImg" alt="">
+          <div class="d-flex align-items-start gap-3 mb-2">
+            <div class="date-pill" style="position:relative; left:auto; top:auto;">
+              <div class="day" id="mdDia">27</div>
+              <div class="mon" id="mdMes">SET</div>
             </div>
-            <div class="vstack gap-2 flex-grow-1">
-              <div><i class="bi bi-calendar3 me-1"></i> <span id="evWhen"></span></div>
-              <div><i class="bi bi-geo-alt me-1"></i> <span id="evWhere"></span></div>
-              <div><i class="bi bi-tags me-1"></i> <span id="evCat"></span></div>
-              <div id="evPriceWrap"></div>
-              <div class="d-flex gap-2 mt-1">
-                <a id="evLink" href="#" target="_blank" class="btn btn-gradient btn-sm">Inscrever-se</a>
-                <a id="evIcs" download class="btn btn-outline-secondary btn-sm">Adicionar ao calendário</a>
+            <div>
+              <div class="h5 m-0 fw-bold" id="mdTitulo">Título</div>
+              <div class="text-muted" id="mdLocal">Local</div>
+              <div class="mt-1">
+                <span class="chip tag" id="mdCategoria">Categoria</span>
+                <span class="chip time ms-1" id="mdHorario"><i class="bi bi-clock"></i> Data e horário</span>
+                <span class="chip ms-1" id="mdPreco"></span>
               </div>
             </div>
           </div>
-          <p id="evDesc" class="mb-0"></p>
+          <p class="mb-0" id="mdDescricao">Descrição do evento…</p>
         </div>
+        <div class="modal-footer justify-content-between">
+          <small class="text-muted">Em caso de dúvidas, fale com a secretaria da AFUJF.</small>
+          <button type="button" id="mdInscrever" class="btn btn-success">
+            <i class="bi bi-check2-circle me-1"></i>Inscrever-se
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1080">
+    <div id="toastOK" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">Inscrição iniciada. Você receberá a confirmação por e-mail.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
       </div>
     </div>
   </div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
-    /* ===== Sessão / Navbar ===== */
-    function getSession(){ try{ return JSON.parse(localStorage.getItem("session")) || null }catch{ return null } }
-    const session = getSession();
-    const isAdmin = !!session && session.role === "admin";
-    const userLabel = document.getElementById("userLabel");
-    const btnLogin = document.getElementById("btnLogin");
-    const btnLogout = document.getElementById("btnLogout");
-    const linkAssociados = document.getElementById("link-associados");
-    if(session){ userLabel.textContent = session.matricula ? `Matrícula ${session.matricula}` : (session.email || "Usuário"); btnLogin?.classList.add("d-none"); btnLogout?.classList.remove("d-none"); }
-    if(isAdmin){ linkAssociados?.classList.remove("d-none"); }
-    btnLogout?.addEventListener("click", () => { localStorage.removeItem("session"); window.location.href = "login.html"; });
+    (() => {
+      /* ===== Offcanvas + launcher ===== */
+      const launcher    = document.getElementById('af-launcher');
+      const offcanvasEl = document.getElementById('menuAFUJF');
+      const offcanvas   = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl, { backdrop:true, scroll:true, keyboard:true });
+      launcher.addEventListener('click', e => { e.preventDefault(); offcanvas.toggle(); });
+      offcanvasEl.addEventListener('show.bs.offcanvas',  () => launcher.classList.add('hidden'));
+      offcanvasEl.addEventListener('hidden.bs.offcanvas', () => launcher.classList.remove('hidden'));
+      document.querySelectorAll('.menu-link').forEach(a => a.addEventListener('click', () => offcanvas.hide()));
 
-    /* ===== Util ===== */
-    const MONTHS = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-    function pad2(n){ return String(n).padStart(2,'0'); }
-    function slug(s){ return (s||"").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
-    function toISO(d){ return new Date(d).toISOString(); }
-    function fmtWhen(s,e){
-      const sd = new Date(s), ed = e ? new Date(e) : null;
-      const sameDay = ed && sd.toDateString() === ed.toDateString();
-      const d1 = `${pad2(sd.getDate())}/${pad2(sd.getMonth()+1)}/${sd.getFullYear()}`;
-      const t1 = `${pad2(sd.getHours())}:${pad2(sd.getMinutes())}`;
-      if(!ed){ return `${d1} • ${t1}`; }
-      const d2 = `${pad2(ed.getDate())}/${pad2(ed.getMonth()+1)}/${ed.getFullYear()}`;
-      const t2 = `${pad2(ed.getHours())}:${pad2(ed.getMinutes())}`;
-      return sameDay ? `${d1} • ${t1}–${t2}` : `${d1} ${t1} → ${d2} ${t2}`;
-    }
-    function icsFor(ev){
-      const dt = s => {
-        const d = new Date(s);
-        return `${d.getUTCFullYear()}${pad2(d.getUTCMonth()+1)}${pad2(d.getUTCDate())}T${pad2(d.getUTCHours())}${pad2(d.getUTCMinutes())}00Z`;
-      };
-      const uid = `${ev.id}@afujf`;
-      const body = [
-        'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AFUJF//Eventos//PT-BR',
-        'BEGIN:VEVENT',
-        `UID:${uid}`,
-        `DTSTAMP:${dt(new Date())}`,
-        `DTSTART:${dt(ev.start)}`,
-        ev.end ? `DTEND:${dt(ev.end)}` : '',
-        `SUMMARY:${ev.title}`,
-        ev.location ? `LOCATION:${ev.location}` : '',
-        ev.description ? `DESCRIPTION:${ev.description.replace(/\n/g,' ')}` : '',
-        'END:VEVENT','END:VCALENDAR'
-      ].filter(Boolean).join('\r\n');
-      return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body);
-    }
-
-    /* ===== Dados (localStorage ou seed) ===== */
-    function getEvents(){
-      try{
-        const local = JSON.parse(localStorage.getItem("eventos"));
-        if(Array.isArray(local) && local.length){
-          return local.map(x => ({
-            id: x.id || slug(x.title),
-            title: x.title || 'Evento',
-            start: x.start || x.dateStart || toISO(new Date()),
-            end: x.end || x.dateEnd || null,
-            location: x.location || '',
-            category: x.category || 'Geral',
-            banner: x.banner || x.img || null,
-            description: x.description || 'Evento da AFUJF.',
-            link: x.link || '#',
-            price: x.price ?? 0,
-            createdAt: x.createdAt || new Date().toISOString()
-          }));
+      /* ===== Dados de exemplo ===== */
+      const eventos = [
+        {
+          id: 1,
+          titulo: "Corrida Solidária AFUJF",
+          categoria: "Esportes",
+          cidade: "Juiz de Fora",
+          local: "Parque Municipal",
+          inicio: "2025-09-27T07:00:00",
+          fim:    "2025-09-27T09:00:00",
+          pago: true,
+          descricao: "Evento beneficente com percurso de 5km. Traga 1kg de alimento para doação."
+        },
+        {
+          id: 2,
+          titulo: "Palestra Saúde & Bem-Estar",
+          categoria: "Saúde",
+          cidade: "Juiz de Fora",
+          local: "Auditório Unimed",
+          inicio: "2025-10-15T19:00:00",
+          fim:    "2025-10-15T20:30:00",
+          pago: false,
+          descricao: "Bate-papo com especialistas sobre prevenção e qualidade de vida."
+        },
+        {
+          id: 3,
+          titulo: "Campanha de Vacinação",
+          categoria: "Prevenção",
+          cidade: "Juiz de Fora",
+          local: "Clínica Vida Plena",
+          inicio: "2025-11-03T08:00:00",
+          fim:    "2025-11-03T17:00:00",
+          pago: true,
+          descricao: "Imunização contra gripe e atualização do calendário vacinal."
+        },
+        {
+          id: 4,
+          titulo: "Festival da Família",
+          categoria: "Lazer",
+          cidade: "Juiz de Fora",
+          local: "Praça Central",
+          inicio: "2025-12-05T10:00:00",
+          fim:    "2025-12-05T18:00:00",
+          pago: false,
+          descricao: "Atividades recreativas, música ao vivo e praça de alimentação."
         }
-      }catch{}
-      // SEED de exemplo
-      const now = new Date();
-      const mk = (offsetDays, hours, title, cat, banner, loc, price=0, durHrs=2) => {
-        const s = new Date(now); s.setDate(s.getDate()+offsetDays); s.setHours(hours,0,0,0);
-        const e = new Date(s); e.setHours(e.getHours()+durHrs);
-        return { id: slug(title), title, start: s.toISOString(), end: e.toISOString(), category: cat, banner, location: loc, description: 'Descrição do evento e informações gerais.', link:'#', price, createdAt: new Date().toISOString() };
-      };
-      return [
-        mk(3, 19, 'Noite de Integração dos Associados', 'Social', null, 'Sede AFUJF', 0),
-        mk(10, 8, 'Check-up em Dia', 'Saúde', null, 'Clínica Bem-Estar', 0),
-        mk(15, 7, 'Corrida Solidária AFUJF', 'Esportes', null, 'Parque Municipal', 20),
-        mk(-12, 18, 'Workshop Finanças Pessoais', 'Educação', null, 'Auditório Unimed', 0),
-        mk(30, 9, 'Campanha de Vacinação', 'Saúde', null, 'Laboratório Alfa', 0),
-        mk(45, 20, 'Jantar de Confraternização', 'Social', null, 'Restaurante Sabor', 120),
       ];
-    }
 
-    /* ===== Estado/elementos ===== */
-    const state = { all: getEvents(), filtered: [] };
-    const grid = document.getElementById('grid');
-    const skeleton = document.getElementById('skeleton');
-    const skTpl = document.getElementById('sk-template');
-    const q = document.getElementById('q');
-    const cat = document.getElementById('cat');
-    const month = document.getElementById('month');
-    const onlyUpcoming = document.getElementById('onlyUpcoming');
-    const sort = document.getElementById('sort');
-    const countNum = document.getElementById('countNum');
-    const activeFilter = document.getElementById('activeFilter');
-    const activeFilterText = document.getElementById('activeFilterText');
-    const emptyState = document.getElementById('emptyState');
+      /* ===== Utilidades ===== */
+      const months = ["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
+      const fmtRange = (ini, fim) => {
+        const d1 = new Date(ini), d2 = new Date(fim);
+        const pad = n => String(n).padStart(2,'0');
+        return `${pad(d1.getDate())}/${pad(d1.getMonth()+1)}/${d1.getFullYear()} • ${pad(d1.getHours())}:${pad(d1.getMinutes())}–${pad(d2.getHours())}:${pad(d2.getMinutes())}`;
+      };
 
-    /* Skeleton inicial */
-    (function showSkeleton(){
-      const frag = document.createDocumentFragment();
-      for(let i=0;i<6;i++){ frag.appendChild(skTpl.content.cloneNode(true)); }
-      skeleton.appendChild(frag);
-    })();
+      /* ===== Refs ===== */
+      const grid    = document.getElementById('eventsGrid');
+      const empty   = document.getElementById('empty');
+      const q       = document.getElementById('q');
+      const cat     = document.getElementById('cat');
+      const cidade  = document.getElementById('cidade');
+      const status  = document.getElementById('status');
+      const quando  = document.getElementById('quando');
+      const ord     = document.getElementById('ord');
 
-    /* Preenche selects dinâmicos */
-    function fillCategoryMonth(){
-      const cats = Array.from(new Set(state.all.map(e => e.category || 'Geral'))).sort();
-      cat.innerHTML = '<option value="">Todas as categorias</option>' + cats.map(c => `<option>${c}</option>`).join('');
-      const months = Array.from(new Set(state.all.map(e => {
-        const d = new Date(e.start);
-        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
-      }))).sort();
-      month.innerHTML = '<option value="">Todos os meses</option>' + months.map(m => {
-        const [y,mm] = m.split('-');
-        return `<option value="${m}">${MONTHS[parseInt(mm,10)-1]}/${y}</option>`;
-      }).join('');
-    }
+      /* ===== Popula selects ===== */
+      [...new Set(eventos.map(e => e.categoria))].sort().forEach(c => {
+        const o = document.createElement('option'); o.value = c; o.textContent = c; cat.appendChild(o);
+      });
+      [...new Set(eventos.map(e => e.cidade))].sort().forEach(c => {
+        const o = document.createElement('option'); o.value = c; o.textContent = c; cidade.appendChild(o);
+      });
 
-    /* Filtro/sort */
-    function applyFilters(openId){
-      const term = q.value.trim().toLowerCase();
-      const c = cat.value;
-      const m = month.value;
-      const onlyFut = onlyUpcoming.checked;
-      const s = sort.value;
+      /* ===== Render ===== */
+      function render(){
+        const term = q.value.trim().toLowerCase();
+        const now  = new Date();
 
-      const now = new Date();
+        let list = eventos.filter(e => {
+          const txt = [e.titulo, e.local, e.categoria, e.cidade, e.descricao].join(' ').toLowerCase();
+          const okQ  = !term || txt.includes(term);
+          const okC  = !cat.value || e.categoria === cat.value;
+          const okCi = !cidade.value || e.cidade === cidade.value;
+          const okS  = !status.value || (status.value === 'gratuito' ? !e.pago : e.pago);
 
-      let list = [...state.all];
+          let okQuando = true;
+          if (quando.value === 'mes'){
+            const d = new Date(e.inicio);
+            okQuando = d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+          } else if (quando.value === '30'){
+            const d = new Date(e.inicio);
+            const diff = (d - now) / (1000*60*60*24);
+            okQuando = diff >= 0 && diff <= 30;
+          }
 
-      if(term){
-        list = list.filter(ev =>
-          (ev.title||'').toLowerCase().includes(term) ||
-          (ev.location||'').toLowerCase().includes(term) ||
-          (ev.category||'').toLowerCase().includes(term)
-        );
-      }
-      if(c){ list = list.filter(ev => (ev.category||'') === c); }
-      if(m){
-        list = list.filter(ev => {
-          const d = new Date(ev.start);
-          return `${d.getFullYear()}-${pad2(d.getMonth()+1)}` === m;
+          return okQ && okC && okCi && okS && okQuando;
+        });
+
+        // Ordenação
+        if (ord.value === 'dataAsc') list.sort((a,b)=> new Date(a.inicio) - new Date(b.inicio));
+        else if (ord.value === 'dataDesc') list.sort((a,b)=> new Date(b.inicio) - new Date(a.inicio));
+        else if (ord.value === 'nome') list.sort((a,b)=> a.titulo.localeCompare(b.titulo,'pt-BR'));
+
+        grid.innerHTML = '';
+        if (!list.length){ empty.classList.remove('d-none'); return; }
+        empty.classList.add('d-none');
+
+        list.forEach(e => {
+          const d = new Date(e.inicio);
+          const d2= new Date(e.fim);
+          const day = String(d.getDate()).padStart(2,'0');
+          const mon = months[d.getMonth()];
+
+          const col = document.createElement('div');
+          col.className = 'col-12 col-md-6';
+          col.innerHTML = `
+            <article class="event-card h-100">
+              <div class="event-banner">
+                <div class="date-pill">
+                  <div class="day">${day}</div>
+                  <div class="mon">${mon}</div>
+                </div>
+              </div>
+              <div class="event-body">
+                <h3 class="event-title h5 mb-1">${e.titulo}</h3>
+                <div class="event-loc"><i class="bi bi-geo-alt"></i>${e.local}</div>
+                <div class="chips">
+                  <span class="chip tag"><i class="bi bi-tag"></i>${e.categoria}</span>
+                  ${e.pago
+                    ? `<span class="chip pay">Pago</span>`
+                    : `<span class="chip free">Gratuito</span>`}
+                  <span class="chip time"><i class="bi bi-clock"></i>${fmtRange(e.inicio,e.fim)}</span>
+                </div>
+                <div class="event-actions">
+                  <button class="btn-details" data-role="detalhes" data-id="${e.id}">Detalhes</button>
+                  <button class="btn-inscrever" data-role="inscrever" data-id="${e.id}">Inscrever-se</button>
+                </div>
+              </div>
+            </article>
+          `;
+          grid.appendChild(col);
         });
       }
-      if(onlyFut){
-        list = list.filter(ev => new Date(ev.end || ev.start) >= now);
-      }
 
-      if(s === 'az'){
-        list.sort((a,b)=> (a.title||'').localeCompare(b.title||''));
-      } else if(s === 'recent'){
-        list.sort((a,b)=> Date.parse(b.createdAt||0) - Date.parse(a.createdAt||0));
-      } else { // nearest
-        list.sort((a,b)=> Date.parse(a.start) - Date.parse(b.start));
-      }
+      ['input','change'].forEach(evt=>{
+        q.addEventListener(evt, render);
+        cat.addEventListener(evt, render);
+        cidade.addEventListener(evt, render);
+        status.addEventListener(evt, render);
+        quando.addEventListener(evt, render);
+        ord.addEventListener(evt, render);
+      });
+      render();
 
-      state.filtered = list;
-      renderGrid();
-      updateBadges();
+      /* ===== Modal Detalhes + Toast inscrição ===== */
+      const mdEl = document.getElementById('modalEvento');
+      const md   = new bootstrap.Modal(mdEl);
+      const toastEl = document.getElementById('toastOK');
+      const toast   = new bootstrap.Toast(toastEl, { delay: 2600 });
 
-      if(openId){ const ev = state.filtered.find(x => x.id === openId); if(ev) openDetails(ev.id); }
-    }
+      document.getElementById('eventsRoot').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-role]');
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        const ev = eventos.find(x => x.id === id);
+        if (!ev) return;
 
-    function updateBadges(){
-      countNum.textContent = state.filtered.length;
-      const parts = [];
-      if(q.value.trim()) parts.push(`Texto: "${q.value.trim()}"`);
-      if(cat.value) parts.push(`Categoria: ${cat.value}`);
-      if(month.value){ const [y,mm] = month.value.split('-'); parts.push(`Mês: ${MONTHS[parseInt(mm,10)-1]}/${y}`); }
-      if(onlyUpcoming.checked) parts.push('Somente futuros');
-      if(parts.length){ activeFilter.classList.remove('d-none'); activeFilterText.textContent = parts.join(' • '); }
-      else { activeFilter.classList.add('d-none'); }
-    }
+        if (btn.dataset.role === 'detalhes'){
+          const d = new Date(ev.inicio), f = new Date(ev.fim);
+          document.getElementById('modalEventoLabel').textContent = ev.titulo;
+          document.getElementById('mdDia').textContent = String(d.getDate()).padStart(2,'0');
+          document.getElementById('mdMes').textContent = months[d.getMonth()];
+          document.getElementById('mdTitulo').textContent = ev.titulo;
+          document.getElementById('mdLocal').textContent  = `${ev.local} • ${ev.cidade}`;
+          document.getElementById('mdCategoria').textContent = ev.categoria;
+          document.getElementById('mdHorario').innerHTML   = `<i class="bi bi-clock"></i> ${('0'+d.getDate()).slice(-2)}/${('0'+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()} • ${('0'+d.getHours()).slice(-2)}:${('0'+d.getMinutes()).slice(-2)}–${('0'+f.getHours()).slice(-2)}:${('0'+f.getMinutes()).slice(-2)}`;
+          document.getElementById('mdPreco').className = `chip ${ev.pago ? 'pay' : 'free'}`;
+          document.getElementById('mdPreco').textContent = ev.pago ? 'Pago' : 'Gratuito';
+          document.getElementById('mdDescricao').textContent = ev.descricao;
 
-    function renderGrid(){
-      grid.innerHTML = '';
-      if(!state.filtered.length){
-        grid.classList.add('d-none');
-        emptyState.classList.remove('d-none');
-        return;
-      }
-      emptyState.classList.add('d-none');
-
-      const frag = document.createDocumentFragment();
-      state.filtered.forEach(ev => frag.appendChild(renderCard(ev)));
-      grid.appendChild(frag);
-
-      grid.classList.remove('d-none');
-      skeleton.classList.add('d-none');
-    }
-
-    function renderCard(ev){
-      const d = new Date(ev.start);
-      const day = d.getDate();
-      const mon = MONTHS[d.getMonth()];
-      const col = document.createElement('div');
-      col.className = 'col-12 col-md-6 col-xl-4';
-
-      const isFree = (ev.price ?? 0) <= 0;
-
-      col.innerHTML = `
-        <article class="event-card h-100" data-open="${ev.id}" role="button">
-          <div class="banner">
-            ${ev.banner ? `<img src="${ev.banner}" alt="${ev.title}">` : ''}
-            <div class="date-pill"><div class="day">${day}</div><div class="mon">${mon}</div></div>
-          </div>
-          <div class="p-3">
-            <h3 class="h6 mb-1">${ev.title}</h3>
-            <div class="text-muted small"><i class="bi bi-geo-alt me-1"></i>${ev.location || 'A definir'}</div>
-            <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
-              <span class="tag"><i class="bi bi-tags"></i><span class="ms-1">${ev.category || 'Geral'}</span></span>
-              ${isFree ? `<span class="badge-free">Gratuito</span>` : `<span class="badge-paid">Pago</span>`}
-              <span class="tag"><i class="bi bi-clock-history"></i><span class="ms-1">${fmtWhen(ev.start, ev.end)}</span></span>
-            </div>
-            <div class="d-flex gap-2 mt-3">
-              <button class="btn btn-outline-secondary btn-sm flex-grow-1" data-open="${ev.id}">Detalhes</button>
-              <a class="btn btn-gradient btn-sm" href="${ev.link || '#'}" target="_blank">Inscrever-se</a>
-            </div>
-          </div>
-        </article>`;
-      return col;
-    }
-
-    /* Ações UI */
-    q.addEventListener('input', debounce(()=>applyFilters(), 160));
-    cat.addEventListener('change', ()=>applyFilters());
-    month.addEventListener('change', ()=>applyFilters());
-    onlyUpcoming.addEventListener('change', ()=>applyFilters());
-    sort.addEventListener('change', ()=>applyFilters());
-    document.getElementById('clearFilters').addEventListener('click', ()=>{
-      q.value=''; cat.value=''; month.value=''; onlyUpcoming.checked=true; sort.value='nearest'; applyFilters();
-    });
-
-    // Delegação para abrir modal
-    document.getElementById('grid').addEventListener('click', (e)=>{
-      const openEl = e.target.closest('[data-open]');
-      if(openEl){ openDetails(openEl.getAttribute('data-open')); }
-    });
-
-    /* Modal de detalhes */
-    const modalEl = document.getElementById('eventModal');
-    const modal = new bootstrap.Modal(modalEl);
-    function openDetails(id){
-      const ev = state.all.find(x => x.id === id);
-      if(!ev) return;
-      document.getElementById('evTitle').textContent = ev.title;
-      const img = document.getElementById('evImg');
-      if(ev.banner){ img.src = ev.banner; img.alt = ev.title; img.classList.remove('d-none'); } else { img.src=''; img.alt=''; img.classList.add('d-none'); }
-      document.getElementById('evWhen').textContent = fmtWhen(ev.start, ev.end);
-      document.getElementById('evWhere').textContent = ev.location || 'A definir';
-      document.getElementById('evCat').textContent = ev.category || 'Geral';
-      document.getElementById('evDesc').textContent = ev.description || '';
-      const priceWrap = document.getElementById('evPriceWrap');
-      const isFree = (ev.price ?? 0) <= 0;
-      priceWrap.innerHTML = isFree ? `<span class="badge-free">Evento gratuito</span>` : `<span class="badge-paid">R$ ${Number(ev.price).toFixed(2)}</span>`;
-      const link = document.getElementById('evLink'); link.href = ev.link || '#';
-      const ics = document.getElementById('evIcs'); ics.href = icsFor(ev); ics.download = `${ev.id}.ics`;
-      modal.show();
-      // adiciona hash na URL (deep-linking)
-      history.replaceState(null, '', `#e=${encodeURIComponent(id)}`);
-    }
-
-    /* Utils */
-    function debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); } }
-
-    /* Reveal on view */
-    const observer = new IntersectionObserver((entries)=>{
-      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); observer.unobserve(e.target); }});
-    }, {threshold:.12});
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    /* Init */
-    (function init(){
-      fillCategoryMonth();
-      // simula carregamento curto para skeleton
-      setTimeout(()=>{
-        applyFilters();
-        // hash deep-link
-        const match = location.hash.match(/#e=([^&]+)/);
-        if(match){ const id = decodeURIComponent(match[1]); applyFilters(id); }
-      }, 250);
+          const mdInscrever = document.getElementById('mdInscrever');
+          mdInscrever.onclick = () => { md.hide(); toast.show(); };
+          md.show();
+        } else if (btn.dataset.role === 'inscrever'){
+          toast.show(); // demonstração
+        }
+      });
     })();
   </script>
 </body>

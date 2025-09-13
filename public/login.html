@@ -1,278 +1,218 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Login • AFUJF</title>
-  <meta name="theme-color" content="#0068A9"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AFUJF – Entrar</title>
 
-  <!-- Bootstrap CSS + Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<!-- Se abrir por HTTP via o mesmo servidor, pode omitir.
+     Mantive absoluto para evitar confusão. -->
+<meta name="api-base" content="http://localhost:4000">
+<meta name="app-base" content="http://localhost:4000">
 
-  <style>
-    :root{
-      --grad-a:#008B5C;       /* verde */
-      --grad-b:#0068A9;       /* azul */
-      --white:#FFF;
-      --black:#353535;
-      --error:#D00000;
-      --success:#009420;
-      --radius: 18px;
-      --shadow-lg: 0 22px 40px rgba(0,0,0,.16), 0 8px 18px rgba(0,0,0,.08);
-      --shadow-md: 0 12px 24px rgba(0,0,0,.12), 0 6px 12px rgba(0,0,0,.08);
-    }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-    body{
-      min-height:100vh;
-      color:var(--black);
-      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
-      background-size:200% 200%;
-      animation: gradientFlow 12s ease infinite;
-      display:grid;
-      place-items:center;
-    }
-    @keyframes gradientFlow{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-
-    .bg-glow::before,
-    .bg-glow::after{
-      content:""; position:fixed; inset:auto auto 6% -6%;
-      width:240px;height:240px;border-radius:50%;
-      background: radial-gradient(closest-side, rgba(255,255,255,.18), transparent);
-      filter: blur(2px); animation: float1 18s ease-in-out infinite;
-      pointer-events:none;
-    }
-    .bg-glow::after{ inset:-10% -10% auto auto; width:300px;height:300px; animation: float2 22s ease-in-out infinite; }
-    @keyframes float1{ 50%{ transform: translateY(-14px) translateX(-10px) } }
-    @keyframes float2{ 50%{ transform: translateY(12px) translateX(14px) } }
-
-    .login-card{
-      width:min(92vw, 920px);
-      border:none; border-radius:var(--radius);
-      background: rgba(255,255,255,.94);
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow-lg);
-      overflow:hidden;
-    }
-    .login-hero{
-      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
-      color:var(--white);
-      position: relative;
-    }
-    .brand-badge{
-      display:inline-flex;align-items:center;gap:.6rem;
-      background: rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.25);
-      padding:.5rem .9rem;border-radius:999px;
-    }
-    .brand-badge .bi{ font-size:1.15rem }
-    .brand-title{ font-weight:700; letter-spacing:.3px }
-    .hero-title{ font-weight:800; letter-spacing:.4px; line-height:1.2 }
-
-    .form-control, .form-select{
-      border-radius:14px;
-      border:1px solid rgba(0,0,0,.08);
-      box-shadow:none;
-      transition:border-color .18s ease, box-shadow .18s ease, transform .12s ease;
-    }
-    .form-control:hover{ transform: translateY(-1px) }
-    .form-control:focus, .form-select:focus{
-      border-color: var(--grad-b);
-      box-shadow: 0 0 0 .2rem rgba(0,104,169,.15);
-    }
-    .is-invalid{ border-color: var(--error) !important; box-shadow: 0 0 0 .2rem rgba(208,0,0,.15) !important; }
-    .is-valid{ border-color: var(--success) !important; box-shadow: 0 0 0 .2rem rgba(0,148,32,.15) !important; }
-
-    .btn-gradient{
-      color:#fff; border:none; border-radius:14px; padding:.9rem 1.1rem;
-      background: linear-gradient(135deg, var(--grad-a), var(--grad-b));
-      box-shadow: var(--shadow-md);
-      position:relative; overflow:hidden;
-      transition: transform .1s ease;
-    }
-    .btn-gradient:hover{ transform: translateY(-1px) }
-    .btn-gradient:active{ transform: translateY(1px) }
-
-    .btn-outline-soft{
-      color:var(--black); background:rgba(0,0,0,.04);
-      border:1px solid rgba(0,0,0,.06);
-      border-radius:12px;
-    }
-
-    .role-toggle .btn{ border-radius:999px; padding:.45rem .95rem; }
-
-    .toast-success{ background:var(--success) !important; color:#fff }
-    .toast-error{ background:var(--error) !important; color:#fff }
-
-    .reveal{ animation: reveal .6s cubic-bezier(.2,.7,.3,1.1) both; }
-    @keyframes reveal{ from{opacity:0; transform: translateY(12px) scale(.98)} to{opacity:1; transform:none} }
-  </style>
+<style>
+  :root{ --g1:#12c26d; --g2:#0ea5a7; --g3:#1366d6; --bd:#d8e6f8; --title:#0c3a62; }
+  body{min-height:100vh;background:
+    radial-gradient(1200px 700px at -10% -15%, #20c07a22, transparent 60%),
+    radial-gradient(1100px 650px at 110% -20%, #0ea5a733, transparent 65%),
+    radial-gradient(1000px 600px at 30% 120%, #1366d619, transparent 60%),
+    linear-gradient(180deg, #f7fbff 0%, #eaf3ff 100%);
+  }
+  .wrap{min-height:100vh;display:grid;grid-template-columns:1fr;gap:28px;align-items:center;padding:80px 18px;}
+  @media (min-width:992px){.wrap{grid-template-columns:1.1fr .9fr;padding:80px 48px;}}
+  .card-aurora{position:relative;background:#ffffffea;border:1px solid #edf2fb;border-radius:26px;padding:22px;box-shadow:0 24px 64px rgba(12,56,110,.14);}
+  .card-aurora::before{content:"";position:absolute;inset:-1px;border-radius:27px;background:conic-gradient(from 180deg at 50% 50%, #12c26d,#0ea5a7,#1366d6,#12c26d);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;padding:1px;filter:blur(.2px);z-index:-1;}
+  .field-grid{--h:52px;--icon-w:44px;--eye-w:48px;display:grid;grid-template-columns:var(--icon-w) 1fr var(--eye-w);align-items:center;height:var(--h);border:1px solid var(--bd);border-radius:14px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.06);overflow:hidden;}
+  .field-grid.no-eye{grid-template-columns:var(--icon-w) 1fr;}
+  .field-grid .fi{display:grid;place-items:center;color:#97aac3;font-size:1.15rem;}
+  .field-grid input{height:100%;border:0;outline:0;background:transparent;padding:0 .85rem;font-size:1rem;}
+  .field-grid .eye-btn{height:100%;width:100%;border:0;border-left:1px solid var(--bd);background:#fff;color:#7e97b6;}
+  .btn-grad{border:0;color:#fff;padding:.8rem 1.05rem;border-radius:999px;background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));box-shadow:0 12px 24px rgba(0,0,0,.14);}
+  .btn-ghost{border:1px solid var(--bd);background:#fff;color:#24496f;padding:.75rem 1rem;border-radius:999px;}
+  .corner-launcher{position:fixed;top:.75rem;left:.75rem;width:68px;height:68px;border:0;border-radius:35px;background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));display:grid;place-items:center;color:#fff;box-shadow:0 18px 38px rgba(0,0,0,.28);}
+  .af-badge{width:48px;height:48px;border-radius:50%;object-fit:cover;box-shadow:0 12px 26px rgba(0,0,0,.35);}
+  .offcanvas-afujf{width:340px;color:#fff;background:linear-gradient(180deg,#12c26d 0%,#0ea5a7 40%,#1366d6 100%);}
+  .menu-link{display:flex;gap:.9rem;color:#fff;text-decoration:none;padding:.9rem 1rem;border-radius:14px;}
+  .menu-link:hover{background:rgba(255,255,255,.1);}
+  .debug{position:fixed;right:10px;bottom:10px;max-width:420px;font:12px/1.4 system-ui;background:#111;color:#0f0;padding:10px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);white-space:pre-wrap;opacity:.9;z-index:9999;display:none;}
+  .debug.show{display:block;}
+</style>
 </head>
-<body class="bg-glow">
+<body>
+  <button id="af-launcher" class="corner-launcher" type="button">
+    <img src="af-badge.png" onerror="this.onerror=null;this.src='afujf.png';" class="af-badge" alt="AFUJF">
+  </button>
 
-  <div class="container py-4">
-    <div class="card login-card reveal">
-      <div class="row g-0">
-        <!-- Painel visual -->
-        <div class="col-lg-5 login-hero d-flex flex-column justify-content-between p-4">
-          <div>
-            <span class="brand-badge mb-3">
-              <i class="bi bi-shield-check"></i>
-              <span class="brand-title">AFUJF</span>
-            </span>
-            <h1 class="hero-title mt-3">Bem-vindo(a) 👋</h1>
-            <p class="mb-0" style="opacity:.9">
-              Entre com sua <strong>matrícula</strong> para acessar carteirinha, convênios e eventos. 
-              Administradores podem gerenciar os associados.
-            </p>
-          </div>
-        </div>
-
-        <!-- Formulário -->
-        <div class="col-lg-7 p-4 p-lg-5">
-          <!-- Toggle de papel -->
-          <div class="d-flex justify-content-end role-toggle mb-3">
-            <input type="radio" class="btn-check" name="role" id="rolePublic" value="public" checked>
-            <label class="btn btn-outline-soft me-2" for="rolePublic"><i class="bi bi-people me-1"></i>Público</label>
-
-            <input type="radio" class="btn-check" name="role" id="roleAdmin" value="admin">
-            <label class="btn btn-outline-soft" for="roleAdmin"><i class="bi bi-person-gear me-1"></i>Admin</label>
-          </div>
-
-          <h2 class="h4 mb-3">Entrar</h2>
-
-          <form id="loginForm" class="needs-validation" novalidate>
-            <div class="mb-3">
-              <label class="form-label" for="matricula"><i class="bi bi-person-vcard me-1"></i>Matrícula</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-123"></i></span>
-                <input id="matricula" name="matricula" class="form-control" inputmode="numeric" pattern="\\d{4,12}" placeholder="Ex.: 123456" required>
-                <div class="invalid-feedback">Informe uma matrícula com 4 a 12 dígitos.</div>
-              </div>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label" for="password"><i class="bi bi-key me-1"></i>Senha</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                <input id="password" name="password" type="password" class="form-control" placeholder="••••••••" minlength="6" required>
-                <button class="btn btn-outline-soft" type="button" id="togglePassword" aria-label="Mostrar/ocultar senha">
-                  <i class="bi bi-eye"></i>
-                </button>
-                <div class="invalid-feedback">A senha deve ter pelo menos 6 caracteres.</div>
-              </div>
-              <div id="capsMsg" class="form-text text-danger d-none"><i class="bi bi-exclamation-triangle me-1"></i>Caps Lock está ativado.</div>
-            </div>
-
-            <div class="d-flex align-items-center mb-4">
-              <div class="form-check me-auto">
-                <input class="form-check-input" type="checkbox" value="" id="remember">
-                <label class="form-check-label" for="remember">Lembrar de mim</label>
-              </div>
-            </div>
-
-            <button id="submitBtn" class="btn btn-gradient w-100" type="submit">
-              <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
-            </button>
-
-            <p class="text-center small text-muted mt-3 mb-0">
-              Ao continuar você concorda com nossos termos e política.
-            </p>
-          </form>
-        </div>
+  <div class="offcanvas offcanvas-start offcanvas-afujf" tabindex="-1" id="menuAFUJF">
+    <div class="offcanvas-header">
+      <div class="d-flex align-items-center gap-3">
+        <img src="af-badge.png" onerror="this.onerror=null;this.src='afujf.png';" class="af-badge" style="width:44px;height:44px;" alt="">
+        <img src="afujf.png" style="max-height:28px" alt="">
       </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <a class="menu-link" href="home.html"><i class="bi bi-house"></i> Home</a>
+      <a class="menu-link" href="carteirinha.html"><i class="bi bi-credit-card-2-front"></i> Minha Carteirinha</a>
+      <a class="menu-link" href="convenios.html"><i class="bi bi-bag-heart"></i> Convênios</a>
+      <a class="menu-link" href="eventos.html"><i class="bi bi-calendar-event"></i> Eventos</a>
+      <a class="menu-link" href="faturas.html"><i class="bi bi-receipt"></i> Faturas</a>
     </div>
   </div>
 
-  <!-- Toasts -->
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1080">
-    <div id="toastSuccess" class="toast toast-success align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body"><i class="bi bi-check-circle me-2"></i>Login realizado com sucesso! Redirecionando…</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+  <div class="wrap">
+    <section class="leftPane">
+      <div class="card-aurora">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <img src="af-badge.png" onerror="this.onerror=null;this.src='afujf.png';" style="width:40px;height:40px;border-radius:12px;" alt="">
+          <img src="afujf.png" style="max-height:26px" alt="">
+        </div>
+        <h2 style="color:var(--title);font-weight:900;">Bem-vindo(a) à AFUJF</h2>
+        <p class="mb-0 text-muted">Acesse sua conta para ver <b>carteirinha</b>, <b>convênios</b>, <b>eventos</b> e <b>faturas</b>.</p>
       </div>
-    </div>
-    <div id="toastError" class="toast toast-error align-items-center border-0 mt-2" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body"><i class="bi bi-x-circle me-2"></i>Dados incorretos. Confira matrícula e senha.</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
-      </div>
-    </div>
+    </section>
+
+    <section class="rightPane">
+      <form id="loginForm" class="card-aurora needs-validation" onsubmit="return false" novalidate>
+        <h3 class="mb-3" style="color:var(--title);font-weight:900;">Entrar</h3>
+        <div id="formError" class="alert alert-danger d-none" role="alert"></div>
+
+        <div class="mb-3">
+          <label class="form-label" for="matricula">Matrícula</label>
+          <div class="field-grid no-eye">
+            <span class="fi"><i class="bi bi-person-vcard"></i></span>
+            <input id="matricula" type="text" inputmode="numeric" placeholder="Ex.: 1021004-7332" required>
+          </div>
+          <div class="invalid-feedback">Informe sua matrícula.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="password">Senha</label>
+          <div class="field-grid">
+            <span class="fi"><i class="bi bi-key"></i></span>
+            <input id="password" type="password" placeholder="Sua senha" minlength="4" required>
+            <button type="button" class="eye-btn" id="togglePwd"><i class="bi bi-eye"></i></button>
+          </div>
+          <div class="invalid-feedback">Informe sua senha.</div>
+        </div>
+
+        <button id="btnEntrar" type="button" class="btn btn-grad w-100">
+          <span class="label">Entrar</span>
+          <span class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+        </button>
+
+        <div class="text-center my-3 text-muted">ou</div>
+        <a href="home.html" class="btn btn-ghost w-100"><i class="bi bi-house-door me-1"></i>Voltar à página inicial</a>
+      </form>
+    </section>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <pre id="debug" class="debug"></pre>
 
-  <script>
-    // Helpers
-    const $ = (s, el=document) => el.querySelector(s);
-    const toast = (id) => new bootstrap.Toast(document.getElementById(id));
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function(){
+  // Bases
+  var apiMeta = document.querySelector('meta[name="api-base"]');
+  var appMeta = document.querySelector('meta[name="app-base"]');
+  var API_BASE = apiMeta && apiMeta.content ? apiMeta.content.replace(/\/+$/,'') : '';
+  var APP_BASE = appMeta && appMeta.content ? appMeta.content.replace(/\/+$/,'') : '';
+  if (!APP_BASE) APP_BASE = API_BASE || (location.origin.startsWith('http') ? location.origin : 'http://localhost:4000');
+  if (!API_BASE) API_BASE = APP_BASE;
+  function ep(p){ return API_BASE + p; }
 
-    // Senha de teste (não exibida na UI)
-    const TEST_PASSWORD = "afujf2025";
+  // Helpers
+  var form = document.getElementById('loginForm');
+  var matricula = document.getElementById('matricula');
+  var password  = document.getElementById('password');
+  var btn       = document.getElementById('btnEntrar');
+  var spinner   = btn.querySelector('.spinner-border');
+  var debugEl   = document.getElementById('debug');
 
-    // Mostrar/Ocultar senha
-    $("#togglePassword").addEventListener("click", () => {
-      const input = $("#password");
-      const icon = $("#togglePassword i");
-      if (input.type === "password") { input.type = "text"; icon.className = "bi bi-eye-slash"; }
-      else { input.type = "password"; icon.className = "bi bi-eye"; }
-      input.focus();
-    });
+  function log(x){
+    try{
+      var now = new Date().toLocaleTimeString();
+      debugEl.textContent += '['+now+'] ' + (typeof x==='string'?x:JSON.stringify(x,null,2)) + '\n';
+      debugEl.classList.add('show');
+      var lines = debugEl.textContent.split('\n');
+      if(lines.length > 100) debugEl.textContent = lines.slice(-100).join('\n');
+    }catch(_){}
+  }
+  function setLoading(v){ btn.disabled=v; spinner.classList.toggle('d-none', !v); btn.querySelector('.label').textContent=v?'Entrando…':'Entrar'; }
+  function showError(msg){ var el=document.getElementById('formError'); el.textContent=msg; el.classList.remove('d-none'); }
+  function clearError(){ document.getElementById('formError').classList.add('d-none'); }
+  function go(target){
+    if (/^https?:\/\//i.test(target)) { location.assign(target); return; }
+    var clean = String(target||'').replace(/^\/+/, '');
+    var abs = new URL(clean, APP_BASE + '/').href;
+    try { location.assign(abs); } catch(e){ location.href = abs; }
+  }
 
-    // Caps Lock
-    $("#password").addEventListener("keyup", (e) => {
-      const on = e.getModifierState && e.getModifierState("CapsLock");
-      $("#capsMsg").classList.toggle("d-none", !on);
-    });
+  // UI
+  var off = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('menuAFUJF'), {backdrop:true});
+  document.getElementById('af-launcher').addEventListener('click', function(){ off.toggle(); });
+  document.getElementById('togglePwd').addEventListener('click', function(){
+    var show = password.type === 'password';
+    password.type = show ? 'text' : 'password';
+    this.innerHTML = show ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+  });
+  form.addEventListener('submit', function(e){ e.preventDefault(); });
+  form.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); btn.click(); }});
+  matricula.addEventListener('input', function(){
+    var d = matricula.value.replace(/\D/g,'').slice(0,11);
+    matricula.value = d.length<=7 ? d : d.slice(0,7)+'-'+d.slice(7);
+  });
 
-    // Validação e login fake (com redirecionamento)
-    $("#loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+  // Clique do botão
+  btn.addEventListener('click', doLogin);
 
-      const matricula = $("#matricula").value.trim();
-      const password = $("#password").value;
-      const role = $("#roleAdmin").checked ? "admin" : "public";
+  async function doLogin(){
+    clearError();
+    if(!matricula.value || !password.value){ form.classList.add('was-validated'); return; }
 
-      const matriculaValid = /^\d{4,12}$/.test(matricula);
-      $("#matricula").classList.toggle("is-invalid", !matriculaValid);
-      $("#matricula").classList.toggle("is-valid", matriculaValid);
+    var body = { matricula: (matricula.value||'').trim(), password: password.value };
 
-      const passValid = password === TEST_PASSWORD;
-      $("#password").classList.toggle("is-invalid", !passValid);
-      $("#password").classList.toggle("is-valid", passValid);
+    setLoading(true);
+    log({ calling: ep('/api/auth/login'), body: body });
 
-      if (!matriculaValid || !passValid) {
-        toast("toastError").show();
-        return;
+    try{
+      var res = await fetch(ep('/api/auth/login'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body)
+      });
+
+      var txt = await res.text();
+      var data = {};
+      try { data = txt ? JSON.parse(txt) : {}; } catch(err){ log('JSON parse error: ' + err.message); }
+
+      log({ status: res.status, ok: res.ok, data: data });
+
+      if(!res.ok){
+        if(res.status===401) return showError('Login não encontrado. Verifique sua matrícula e senha.');
+        if(res.status===403) return showError((data && data.message) || 'Acesso negado.');
+        return showError((data && data.message) || 'Não foi possível entrar agora.');
       }
 
-      const btn = $("#submitBtn");
-      const originalHTML = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Entrando…';
+      if (data.redirect) { go(data.redirect); return; }
 
-      try{
-        await new Promise(r => setTimeout(r, 800)); // simulação
+      var user = data.user || {};
+      if (user.role === 'admin')     { go('/admin/home.html');  return; }
+      if (user.role === 'associado') { go('/public/home.html'); return; }
 
-        // Salva sessão (compatível com as demais páginas)
-        localStorage.setItem("session", JSON.stringify({
-          matricula, role, email: `matricula:${matricula}`
-        }));
-
-        toast("toastSuccess").show();
-
-        setTimeout(() => {
-          if (role === "admin") window.location.href = "associados.html";
-          else window.location.href = "dashboard.html";
-        }, 900);
-      }catch(err){
-        toast("toastError").show();
-      }finally{
-        btn.disabled = false;
-        btn.innerHTML = originalHTML;
-      }
-    });
-  </script>
+      showError('Login efetuado, mas não foi possível identificar o perfil.');
+    }catch(err){
+      log(err && err.message ? err.message : err);
+      showError('Falha ao conectar à API em ' + API_BASE + '.');
+    }finally{
+      setLoading(false);
+    }
+  }
+})();
+</script>
 </body>
 </html>

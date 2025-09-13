@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AFUJF – Admin • Associados</title>
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --g1:#12c26d; --g2:#0ea5a7; --g3:#1366d6;
+      --ink:#eef6ff; --glass: rgba(255,255,255,.10); --glass-2: rgba(255,255,255,.16);
+      --title:#0c3a62; --muted:#6b82a3;
+    }
+
+    /* Fundo */
+    body{
+      background:
+        radial-gradient(1400px 800px at -10% -10%, #20c07a22, transparent 60%),
+        radial-gradient(1200px 700px at 110% -20%, #0ea5a733, transparent 65%),
+        linear-gradient(180deg, #f7fbff 0%, #eaf3ff 100%);
+    }
+
+    /* ===== Launcher / Navbar ===== */
+    .corner-launcher{
+      position:fixed; top:.75rem; left:.75rem; width:68px; height:68px; border:0; border-radius:35px;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+      display:grid; place-items:center; color:#fff; cursor:pointer; z-index:1061;
+      box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.22);
+      transition:transform .15s, box-shadow .2s, filter .2s, opacity .2s; -webkit-tap-highlight-color:transparent;
+    }
+    .corner-launcher:hover{ transform:translateY(-2px); box-shadow:0 24px 44px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.22); }
+    .corner-launcher.hidden{ opacity:0; transform:translate(-10px,-10px) scale(.96); pointer-events:none; }
+    .af-badge{ width:48px; height:48px; border-radius:50%; object-fit:cover; display:block; box-shadow:0 12px 26px rgba(0,0,0,.35); }
+
+    .offcanvas-afujf{ width:340px; color:#fff; border-right:0;
+      background:linear-gradient(180deg,var(--g1),var(--g2) 40%,var(--g3)); box-shadow:6px 0 26px rgba(0,0,0,.35);}
+    .offcanvas-afujf .offcanvas-header{ border-bottom:1px solid rgba(255,255,255,.15); }
+    .brand-badge-img{ width:44px; height:44px; border-radius:50%; object-fit:cover; box-shadow:0 8px 18px rgba(0,0,0,.35); }
+    .brand-title-img{ max-height:28px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+    .menu-list{ list-style:none; margin:0; padding:.25rem 0; }
+    .menu-link{ display:flex; align-items:center; gap:.9rem; color:#fff; text-decoration:none; padding:.9rem 1rem;
+      border-radius:14px; margin:.2rem 0; transition:background .2s, transform .15s, box-shadow .2s;}
+    .menu-link:hover{ background:var(--glass); transform:translateX(3px); box-shadow:0 10px 20px rgba(0,0,0,.25);}
+    .menu-link.active{ background:var(--glass-2); box-shadow:0 14px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25);}
+    .menu-divider{ height:1px; background:rgba(255,255,255,.18); margin:.75rem 0 1rem; border-radius:2px;}
+    .admin-block{ border-top:1px solid rgba(255,255,255,.14); margin-top:1rem; padding-top:1rem;
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem;}
+    .admin-badge{ width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:#fff;
+      background: linear-gradient(150deg,var(--g3),#0e8bd6); box-shadow:0 8px 18px rgba(0,0,0,.28); }
+
+    /* ===== Conteúdo ===== */
+    main{ padding:110px 16px 56px; }
+    .container-narrow{ max-width:1200px; margin:0 auto; }
+
+    .hero{ display:flex; align-items:flex-end; gap:14px; margin-bottom:18px; }
+    .hero-chip{
+      width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-size:1.35rem;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+      box-shadow:0 12px 26px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+    }
+    .hero h1{ font-size: clamp(1.2rem, 4vw, 1.9rem); margin:0; color:#0c3a62; font-weight:900; }
+    .hero small{ color:#6b82a3; display:block; margin-top:2px; }
+
+    /* KPIs */
+    .kpi-grid{ display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:14px; }
+    @media (min-width:768px){ .kpi-grid{ grid-template-columns: repeat(4, 1fr); } }
+    .kpi{ background:#ffffffd9; backdrop-filter: blur(6px); border-radius:16px; padding:14px;
+      box-shadow:0 18px 34px rgba(12,52,100,.10); display:flex; align-items:center; gap:12px; }
+    .kpi-ico{
+      width:44px; height:44px; border-radius:12px; display:grid; place-items:center; color:#fff; font-size:1.2rem;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3)); box-shadow:0 10px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+      animation:pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse{ 0%,100%{ transform:scale(1)} 50%{ transform:scale(1.06)} }
+    .kpi-val{ font-weight:900; color:#103a63; font-size:1.2rem; }
+    .kpi-sub{ color:#6a86a7; font-size:.92rem; margin-top:-2px; }
+
+    /* Toolbar */
+    .toolbar{
+      background:#ffffffd9; backdrop-filter: blur(6px); border-radius:16px; padding:12px;
+      box-shadow:0 18px 36px rgba(12,52,100,.10); display:grid; gap:10px; grid-template-columns:1fr; margin-bottom:14px;
+    }
+    @media (min-width:992px){ .toolbar{ grid-template-columns: 1.5fr 200px auto auto auto auto; align-items:center; } }
+    .search-input{ border:1px solid #d8e6f8; border-radius:10px; padding:.65rem .8rem; }
+    .btn-grad{
+      border:0; border-radius:12px; padding:.6rem .9rem; font-weight:800;
+      background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3)); color:#fff; box-shadow:0 12px 24px rgba(0,0,0,.18);
+    }
+    .btn-ghost{ border:1px solid #d0daea; background:#fff; color:#24496f; border-radius:12px; padding:.6rem .9rem; font-weight:700; }
+
+    /* Tabela */
+    .cardx{ background:#fff; border-radius:18px; padding:14px; box-shadow:0 18px 42px rgba(14,56,110,.12); border:1px solid #e7f0fb; }
+    .table thead th{ border-bottom:1px solid #e8f0ff; color:#173b61; }
+    .pill{ border-radius:999px; padding:.25rem .6rem; font-weight:800; }
+    .pill.ok{ background:#e8fff1; color:#18794e; border:1px solid #c8ffd9; }
+    .pill.bad{ background:#ffe3e3; color:#9a1f1f; border:1px solid #ffc4c4; }
+
+    /* Modal */
+    .modal-gradient{ background: linear-gradient(180deg, #f7fbff 0%, #ecf4ff 100%); }
+  </style>
+</head>
+<body>
+
+  <!-- Botão fixo -->
+  <button id="af-launcher" class="corner-launcher" type="button" aria-label="Abrir menu">
+    <img src="af-badge.png" alt="AFUJF" class="af-badge">
+  </button>
+
+  <!-- Navbar lateral (ADMIN) -->
+  <div class="offcanvas offcanvas-start offcanvas-afujf" tabindex="-1" id="menuAFUJF" aria-labelledby="menuAFUJFLabel">
+    <div class="offcanvas-header align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <img src="af-badge.png" alt="AFUJF" class="brand-badge-img">
+        <div>
+          <img id="menuAFUJFLabel" src="afujf.png" alt="AFUJF" class="brand-title-img">
+          <small class="opacity-75">Administração</small>
+        </div>
+      </div>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column">
+      <ul class="menu-list">
+        <li><a class="menu-link" href="admin-home.html"><i class="bi bi-speedometer2"></i> Home</a></li>
+        <li><a class="menu-link active" href="admin-associados.html"><i class="bi bi-people"></i> Associados</a></li>
+        <li><a class="menu-link" href="admin-convenios.html"><i class="bi bi-bag-heart"></i> Convênios</a></li>
+        <li><a class="menu-link" href="admin-eventos.html"><i class="bi bi-calendar-event"></i> Eventos</a></li>
+        <li><a class="menu-link" href="admin-faturamento.html"><i class="bi bi-receipt"></i> Faturamento</a></li>
+      </ul>
+
+      <div class="menu-divider"></div>
+      <div class="mt-auto admin-block">
+        <div class="d-flex align-items-center gap-2">
+          <div class="admin-badge"><i class="bi bi-shield-lock"></i></div>
+          <div>
+            <div class="fw-semibold">Administrador</div>
+            <small class="opacity-75">Painel AFUJF</small>
+          </div>
+        </div>
+        <button class="btn btn-outline-light btn-sm px-3" type="button">
+          <i class="bi bi-box-arrow-right me-1"></i> Sair
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <main class="container-narrow">
+    <!-- Header -->
+    <header class="hero">
+      <div class="hero-chip"><i class="bi bi-people"></i></div>
+      <div>
+        <h1>Associados</h1>
+        <small>Gerencie a base, acompanhe a receita gerada e importe/exporte dados.</small>
+      </div>
+    </header>
+
+    <!-- KPIs -->
+    <section class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-ico"><i class="bi bi-people-fill"></i></div>
+        <div>
+          <div class="kpi-val" id="kpiTotal">0</div>
+          <div class="kpi-sub">Associados ativos</div>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-ico"><i class="bi bi-cash-coin"></i></div>
+        <div>
+          <div class="kpi-val" id="kpiMensal">R$ 0,00</div>
+          <div class="kpi-sub">Valor mensal gerado (ativos)</div>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-ico"><i class="bi bi-calendar2-check"></i></div>
+        <div>
+          <div class="kpi-val" id="kpiAnual">R$ 0,00</div>
+          <div class="kpi-sub">Receita anual projetada</div>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-ico"><i class="bi bi-graph-up"></i></div>
+        <div>
+          <div class="kpi-val" id="kpiMedia">R$ 0,00</div>
+          <div class="kpi-sub">Média anual por associado</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar -->
+    <section class="toolbar">
+      <input id="busca" type="search" class="form-control search-input" placeholder="Buscar por nome, CPF, e-mail…" />
+      <select id="statusFiltro" class="form-select">
+        <option value="">Todos os status</option>
+        <option value="Ativo">Ativo</option>
+        <option value="Inativo">Inativo</option>
+      </select>
+      <button id="btnAdicionar" class="btn-grad"><i class="bi bi-person-plus me-1"></i> Adicionar</button>
+      <button id="btnRemoverSel" class="btn-ghost"><i class="bi bi-person-dash me-1"></i> Remover</button>
+      <button id="btnImportar" class="btn-ghost"><i class="bi bi-file-earmark-arrow-up me-1"></i> Importar CSV</button>
+      <button id="btnExportar" class="btn-ghost"><i class="bi bi-file-earmark-arrow-down me-1"></i> Exportar CSV</button>
+      <input id="fileInput" type="file" accept=".csv" class="d-none">
+    </section>
+
+    <!-- Tabela -->
+    <section class="cardx">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th style="width:38px;"><input id="selAll" class="form-check-input" type="checkbox"></th>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th class="d-none d-md-table-cell">E-mail</th>
+              <th>Status</th>
+              <th>Cargo</th>
+              <th>Mensalidade</th>
+              <th class="d-none d-lg-table-cell">Admissão</th>
+              <th class="text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: Adicionar associado -->
+  <div class="modal fade" id="modalAdd" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-gradient">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Novo associado</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-2">
+            <div class="col-12">
+              <label class="form-label">Nome</label>
+              <input id="fNome" class="form-control" placeholder="Nome completo">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">CPF</label>
+              <input id="fCPF" class="form-control" placeholder="000.000.000-00">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">E-mail</label>
+              <input id="fEmail" type="email" class="form-control" placeholder="email@exemplo.com">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Mensalidade (R$)</label>
+              <input id="fMensal" type="number" min="0" step="0.01" class="form-control" placeholder="148,90">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select id="fStatus" class="form-select">
+                <option>Ativo</option>
+                <option>Inativo</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Cargo</label>
+              <select id="fCargo" class="form-select">
+                <option>Efetivado</option>
+                <option>Estagiário</option>
+                <option>Jovem Aprendiz</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Admissão</label>
+              <input id="fAdm" type="date" class="form-control">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="saveAdd" class="btn btn-success">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Confirmar remoção -->
+  <div class="modal fade" id="modalDel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content modal-gradient">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Remover associados</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          Tem certeza que deseja remover <strong id="delCount">0</strong> associado(s)? Essa ação não pode ser desfeita.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="confirmDel" class="btn btn-danger">Remover</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1080">
+    <div id="toastOK" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">Ação concluída.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (() => {
+      /* ===== Offcanvas + launcher ===== */
+      const launcher    = document.getElementById('af-launcher');
+      const offcanvasEl = document.getElementById('menuAFUJF');
+      const offcanvas   = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl, { backdrop:true, scroll:true, keyboard:true });
+      launcher.addEventListener('click', e => { e.preventDefault(); offcanvas.toggle(); });
+      offcanvasEl.addEventListener('show.bs.offcanvas',  () => launcher.classList.add('hidden'));
+      offcanvasEl.addEventListener('hidden.bs.offcanvas', () => launcher.classList.remove('hidden'));
+      document.querySelectorAll('.menu-link').forEach(a => a.addEventListener('click', () => offcanvas.hide()));
+
+      /* ===== Dados (mock) ===== */
+      let seq = 1000;
+      let associados = [
+        {id:++seq, nome:'Nome Sobrenome', cpf:'102.100.473-32', email:'nome@exemplo.com', status:'Ativo',   cargo:'Efetivado',       mensal:148.90, adm:'2024-03-12'},
+        {id:++seq, nome:'João Silva',     cpf:'111.222.333-44', email:'joao@dominio.com',  status:'Ativo',   cargo:'Efetivado',       mensal:148.90, adm:'2023-10-01'},
+        {id:++seq, nome:'Maria Souza',    cpf:'555.666.777-88', email:'maria@dominio.com', status:'Ativo',   cargo:'Estagiário',      mensal:159.90, adm:'2022-06-20'},
+        {id:++seq, nome:'Carlos Lima',    cpf:'999.888.777-66', email:'carlos@dom.com',    status:'Inativo', cargo:'Jovem Aprendiz',  mensal:148.90, adm:'2020-01-10'},
+        {id:++seq, nome:'Ana Paula',      cpf:'321.654.987-00', email:'ana@dom.com',       status:'Ativo',   cargo:'Efetivado',       mensal:139.90, adm:'2025-02-18'},
+        {id:++seq, nome:'Pedro Alves',    cpf:'741.852.963-10', email:'pedro@dom.com',     status:'Ativo',   cargo:'Efetivado',       mensal:148.90, adm:'2021-09-05'},
+        {id:++seq, nome:'Beatriz Reis',   cpf:'741.222.963-10', email:'bia@dom.com',       status:'Inativo', cargo:'Estagiário',      mensal:148.90, adm:'2021-01-22'}
+      ];
+
+      /* ===== Utils ===== */
+      const money = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      const toast = new bootstrap.Toast(document.getElementById('toastOK'), { delay: 2000 });
+      const tbody = document.getElementById('tbody');
+
+      /* ===== KPIs ===== */
+      function updateKPIs(){
+        const ativos = associados.filter(a => a.status === 'Ativo');
+        const totalAtivos = ativos.length;
+        const mensal = ativos.reduce((s,a)=> s + (a.mensal||0), 0);
+        const anual  = mensal * 12;
+        const media  = totalAtivos ? (anual/totalAtivos) : 0;
+
+        document.getElementById('kpiTotal').textContent = totalAtivos.toLocaleString('pt-BR');
+        document.getElementById('kpiMensal').textContent = money(mensal);
+        document.getElementById('kpiAnual').textContent  = money(anual);
+        document.getElementById('kpiMedia').textContent  = money(media);
+      }
+
+      /* ===== Render tabela ===== */
+      const busca = document.getElementById('busca');
+      const statusFiltro = document.getElementById('statusFiltro');
+      const selAll = document.getElementById('selAll');
+
+      function renderTable(){
+        const q = busca.value.trim().toLowerCase();
+        const st = statusFiltro.value;
+        let list = associados.filter(a => {
+          const txt = (a.nome+' '+a.cpf+' '+a.email+' '+(a.cargo||'')).toLowerCase();
+          const okQ = !q || txt.includes(q);
+          const okS = !st || a.status === st;
+          return okQ && okS;
+        });
+
+        tbody.innerHTML = '';
+        list.forEach(a => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><input class="form-check-input selRow" data-id="${a.id}" type="checkbox"></td>
+            <td>${a.nome}</td>
+            <td>${a.cpf}</td>
+            <td class="d-none d-md-table-cell">${a.email}</td>
+            <td><span class="pill ${a.status==='Ativo'?'ok':'bad'}" data-role="toggle" data-id="${a.id}" style="cursor:pointer">${a.status}</span></td>
+            <td>${a.cargo || '-'}</td>
+            <td><strong>${money(a.mensal||0)}</strong></td>
+            <td class="d-none d-lg-table-cell">${a.adm ? new Date(a.adm).toLocaleDateString('pt-BR') : '-'}</td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary" data-role="ver" data-id="${a.id}"><i class="bi bi-eye"></i></button>
+              <button class="btn btn-sm btn-outline-danger" data-role="delOne" data-id="${a.id}"><i class="bi bi-trash"></i></button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+        selAll.checked = false;
+        updateKPIs();
+      }
+
+      busca.addEventListener('input', renderTable);
+      statusFiltro.addEventListener('change', renderTable);
+
+      /* ===== Ações de linha ===== */
+      document.getElementById('tbody').addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-role]');
+        if(!btn) return;
+        const id = Number(btn.dataset.id);
+        const idx = associados.findIndex(x=>x.id===id);
+        if(idx<0) return;
+
+        if(btn.dataset.role==='toggle'){
+          associados[idx].status = associados[idx].status === 'Ativo' ? 'Inativo' : 'Ativo';
+          renderTable();
+          document.querySelector('#toastOK .toast-body').textContent = 'Status atualizado.';
+          toast.show();
+        }
+        if(btn.dataset.role==='delOne'){
+          associados.splice(idx,1);
+          renderTable();
+          document.querySelector('#toastOK .toast-body').textContent = 'Associado removido.';
+          toast.show();
+        }
+        if(btn.dataset.role==='ver'){
+          document.querySelector('#toastOK .toast-body').textContent = `Abrindo ficha de ${associados[idx].nome} (demo).`;
+          toast.show();
+        }
+      });
+
+      /* ===== Seleção em massa ===== */
+      selAll.addEventListener('change', ()=>{
+        document.querySelectorAll('.selRow').forEach(c=> c.checked = selAll.checked );
+      });
+
+      /* ===== Adicionar ===== */
+      const modalAdd = new bootstrap.Modal(document.getElementById('modalAdd'));
+      document.getElementById('btnAdicionar').addEventListener('click', ()=> modalAdd.show());
+      document.getElementById('saveAdd').addEventListener('click', ()=>{
+        const nome = document.getElementById('fNome').value.trim();
+        const cpf  = document.getElementById('fCPF').value.trim();
+        const email= document.getElementById('fEmail').value.trim();
+        const mensal = parseFloat(document.getElementById('fMensal').value.replace(',','.')) || 0;
+        const status = document.getElementById('fStatus').value;
+        const cargo  = document.getElementById('fCargo').value;
+        const adm    = document.getElementById('fAdm').value || null;
+        if(!nome){ alert('Informe o nome.'); return; }
+        associados.push({id:++seq, nome, cpf, email, status, cargo, mensal, adm});
+        modalAdd.hide();
+        ['fNome','fCPF','fEmail','fMensal','fAdm'].forEach(id=> document.getElementById(id).value='');
+        document.getElementById('fStatus').value='Ativo';
+        document.getElementById('fCargo').value='Efetivado';
+        renderTable();
+        document.querySelector('#toastOK .toast-body').textContent = 'Associado adicionado.';
+        toast.show();
+      });
+
+      /* ===== Remover selecionados ===== */
+      const modalDel = new bootstrap.Modal(document.getElementById('modalDel'));
+      document.getElementById('btnRemoverSel').addEventListener('click', ()=>{
+        const ids = [...document.querySelectorAll('.selRow:checked')].map(c=>Number(c.dataset.id));
+        if(!ids.length){ document.querySelector('#toastOK .toast-body').textContent = 'Selecione ao menos 1 associado.'; toast.show(); return; }
+        document.getElementById('delCount').textContent = ids.length;
+        modalDel.show();
+        document.getElementById('confirmDel').onclick = ()=>{
+          associados = associados.filter(a => !ids.includes(a.id));
+          modalDel.hide(); renderTable();
+          document.querySelector('#toastOK .toast-body').textContent = 'Associados removidos.';
+          toast.show();
+        };
+      });
+
+      /* ===== Importar / Exportar CSV ===== */
+      const fileInput = document.getElementById('fileInput');
+      document.getElementById('btnImportar').addEventListener('click', ()=> fileInput.click());
+      fileInput.addEventListener('change', ()=>{
+        const f = fileInput.files[0]; if(!f) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const text = reader.result;
+          const rows = text.split(/\r?\n/).filter(l=>l.trim().length);
+          if(!rows.length){ alert('Arquivo vazio.'); return; }
+          // Detecta separador ; ou ,
+          const sep = rows[0].includes(';') ? ';' : ',';
+          // Suporta 6 ou 7 colunas:
+          // 7: nome,cpf,email,status,cargo,mensal,adm
+          // 6: nome,cpf,email,status,mensal,adm   (cargo default Efetivado)
+          let imported = 0;
+          rows.slice(1).forEach(l => {
+            const cols = l.split(sep).map(s=>s.trim());
+            if(cols.length < 6) return;
+            let nome, cpf, email, status, cargo, mensalStr, adm;
+            if(cols.length >= 7){
+              [nome, cpf, email, status, cargo, mensalStr, adm] = cols;
+            } else {
+              [nome, cpf, email, status, mensalStr, adm] = cols;
+              cargo = 'Efetivado';
+            }
+            if(!nome) return;
+            const mensal = parseFloat(mensalStr.replace('.','').replace(',','.')) || 0;
+            associados.push({id:++seq, nome, cpf, email, status: (status==='Inativo'?'Inativo':'Ativo'), cargo, mensal, adm: adm || null});
+            imported++;
+          });
+          renderTable();
+          document.querySelector('#toastOK .toast-body').textContent = `Importação concluída: ${imported} registro(s).`;
+          toast.show();
+          fileInput.value = '';
+        };
+        reader.readAsText(f, 'utf-8');
+      });
+
+      document.getElementById('btnExportar').addEventListener('click', ()=>{
+        const header = ['nome','cpf','email','status','cargo','mensal','adm'];
+        const lines = [header.join(',')];
+        associados.forEach(a=>{
+          const row = [
+            `"${(a.nome||'').replace(/"/g,'""')}"`,
+            `"${a.cpf||''}"`,
+            `"${a.email||''}"`,
+            a.status||'',
+            `"${a.cargo||''}"`,
+            (a.mensal||0).toString().replace('.',','), // BR
+            a.adm || ''
+          ];
+          lines.push(row.join(','));
+        });
+        const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'associados_afujf.csv'; a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      /* Init */
+      renderTable();
+    })();
+  </script>
+</body>
+</html>
