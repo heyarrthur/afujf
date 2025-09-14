@@ -1,0 +1,130 @@
+/* AFUJF – Admin (menu + dashboard) • versão aprimorada */
+
+/* ===== Tokens ===== */
+:root{
+  --g1:#12c26d; --g2:#0ea5a7; --g3:#1366d6;
+  --title:#0c3a62; --muted:#6b82a3; --text:#0b2540;
+  --border:#e5e7eb; --shadow:0 10px 35px rgba(15,23,42,.08);
+  --radius-xl:26px; --radius:14px; --radius-pill:999px;
+  --surface:#fff; --surface-soft:#ffffffd9;
+}
+
+/* fundo suave com layers */
+body{
+  background:
+    radial-gradient(1400px 800px at -10% -10%, #20c07a22, transparent 60%),
+    radial-gradient(1200px 700px at 110% -20%, #0ea5a733, transparent 65%),
+    linear-gradient(180deg, #f7fbff 0%, #eaf3ff 100%);
+}
+.main-pad{ padding-top:110px; padding-bottom:56px; }
+
+/* ===== Launcher (foto botão) ===== */
+.corner-launcher{
+  position:fixed; top:.75rem; left:.75rem; width:68px; height:68px; border:0; border-radius:35px;
+  background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+  display:grid; place-items:center; color:#fff; cursor:pointer; z-index:1061; -webkit-tap-highlight-color:transparent;
+  box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.22);
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease, opacity .2s ease;
+}
+.corner-launcher:hover{ transform:translateY(-2px); box-shadow:0 24px 44px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.22); }
+.corner-launcher.hidden{ opacity:0; transform:translate(-10px,-10px) scale(.96); pointer-events:none; }
+.af-badge{ width:48px; height:48px; border-radius:50%; object-fit:cover; display:block; box-shadow:0 12px 26px rgba(0,0,0,.35); }
+
+/* ===== Offcanvas temático ===== */
+.offcanvas-afujf{
+  width:340px; color:#fff; border-right:0;
+  background: linear-gradient(180deg, var(--g1) 0%, var(--g2) 40%, var(--g3) 100%);
+  box-shadow: 6px 0 26px rgba(0,0,0,.35);
+}
+.offcanvas-afujf .offcanvas-header{ border-bottom:1px solid rgba(255,255,255,.15); }
+.brand-badge-img{ width:44px; height:44px; border-radius:50%; object-fit:cover; box-shadow:0 8px 18px rgba(0,0,0,.35); }
+.brand-title-img{ max-height:28px; width:auto; display:block; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+
+.menu-list{ list-style:none; margin:0; padding:.25rem 0; }
+.menu-link{
+  display:flex; align-items:center; gap:.9rem; color:#fff; text-decoration:none;
+  padding:.9rem 1rem; border-radius:14px; margin:.2rem 0;
+  transition: background .2s, transform .15s, box-shadow .2s;
+}
+.menu-link:hover{ background:rgba(255,255,255,.10); transform:translateX(3px); box-shadow:0 10px 20px rgba(0,0,0,.25); }
+.menu-link.active{ background:rgba(255,255,255,.16); box-shadow:0 14px 32px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25); }
+.menu-divider{ height:1px; background:rgba(255,255,255,.18); margin:.75rem 0 1rem; border-radius:2px; }
+
+.admin-block{
+  border-top:1px solid rgba(255,255,255,.14); margin-top:1rem; padding-top:1rem;
+  display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+}
+.admin-badge{
+  width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:#fff;
+  background: linear-gradient(150deg,var(--g3),#0e8bd6); box-shadow:0 8px 18px rgba(0,0,0,.28);
+}
+
+/* ===== Hero ===== */
+.hero{ display:flex; align-items:flex-end; gap:14px; }
+.hero-chip{
+  width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-size:1.35rem;
+  background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+  box-shadow:0 12px 26px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+  animation:pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse{ 0%,100%{ transform:scale(1)} 50%{ transform:scale(1.06)} }
+.hero-title{ font-size: clamp(1.2rem, 4vw, 1.9rem); margin:0; color:var(--title); font-weight:900; }
+
+/* ===== Cards ===== */
+.card{ border:1px solid var(--border); border-radius:var(--radius-xl); box-shadow:var(--shadow); }
+.card::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:3px; border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  background:linear-gradient(90deg,var(--g1),var(--g2),var(--g3)); opacity:.8;
+}
+.cardx{ padding:14px; border:1px solid #e7f0fb; border-radius:18px; box-shadow:0 18px 42px rgba(14,56,110,.12); background:#fff }
+.cardx-title{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;
+  color:#123b64; font-weight:900;
+}
+
+/* KPIs */
+.kpi{ display:flex; align-items:center; gap:12px; padding:14px; }
+.kpi-ico{
+  width:44px; height:44px; border-radius:12px; display:grid; place-items:center; color:#fff; font-size:1.2rem;
+  background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+  box-shadow:0 10px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.kpi-val{ font-weight:900; color:#103a63; font-size:1.2rem; }
+.kpi-sub{ color:#6a86a7; font-size:.92rem; margin-top:-2px; }
+
+/* Legend + chart */
+.legend{ display:flex; gap:.75rem; flex-wrap:wrap; }
+.legend .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+.legend .l1{ background:#12c26d; }
+.chart-wrap{ position:relative; width:100%; height:240px; }
+.chart-wrap svg{ width:100%; height:100%; display:block; }
+.chart-bg{ fill:url(#gridGrad); stroke:#e8f0ff; stroke-width:1; }
+
+/* Lista limpa + barra */
+.list-clean{ list-style:none; margin:0; padding:0; }
+.list-clean li{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 0; border-bottom:1px dashed #e2ecfb; }
+.list-clean li:last-child{ border-bottom:0; }
+.hbar{ background:#eef4ff; border:1px solid #dce8ff; border-radius:12px; height:12px; overflow:hidden; }
+.hbar > span{ display:block; height:100%; background:linear-gradient(90deg,var(--g1),var(--g2) 50%,var(--g3)); }
+
+/* Ações rápidas */
+.quick-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (min-width:576px){ .quick-grid{ grid-template-columns: repeat(3, 1fr);} }
+.qbtn{
+  border:1px solid #d7e4f5; border-radius:14px; padding:.9rem; cursor:pointer;
+  display:flex; align-items:center; gap:.6rem; user-select:none; text-decoration:none; color:#143a60; font-weight:800;
+  transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  background:#fff;
+}
+.qbtn:hover{ transform: translateY(-2px); box-shadow:0 12px 24px rgba(0,0,0,.08); }
+.qico{
+  width:36px; height:36px; border-radius:10px; display:grid; place-items:center; color:#fff;
+  background:linear-gradient(150deg,var(--g1),var(--g2) 45%,var(--g3));
+  box-shadow:0 10px 18px rgba(0,0,0,.15);
+}
+
+/* Pills */
+.pill{ border-radius:999px; padding:.25rem .6rem; font-weight:800; }
+.pill.ok{ background:#e8fff1; color:#18794e; border:1px solid #c8ffd9; }
+.pill.warn{ background:#fff4e3; color:#9a5c14; border:1px solid #ffd8a8; }
+.pill.info{ background:#e7f6ff; color:#0b64a3; border:1px solid #c7e7ff; }

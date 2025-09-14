@@ -1,0 +1,155 @@
+/* ===== AFUJF – Login (estilo do print) ===== */
+
+/* Paleta e dimensões */
+:root{
+  --bg1: #f1f7fe;              /* fundo claro azulado */
+  --bg2: #eef6ff;              /* degrade suave */
+  --surface: #ffffff;          /* cards */
+  --text: #0b2540;             /* títulos */
+  --muted: #6b7280;            /* secundário */
+  --border: #e5e7eb;           /* borda */
+  --shadow: 0 10px 35px rgba(15,23,42,.08);
+
+  --radius-xl: 26px;
+  --radius: 14px;
+
+  /* gradiente verde → azul (botão e borda top) */
+  --grad-a: #10b981;
+  --grad-b: #2563eb;
+}
+
+/* ----- base ----- */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color: var(--text);
+  /* fundo semelhante ao print (bem suave) */
+  background:
+    radial-gradient(1200px 480px at 100% -10%, #e9f9ff, transparent 60%),
+    radial-gradient(900px 400px at 0% -5%, #eaf6ff, transparent 55%),
+    linear-gradient(180deg, var(--bg2), #f7fbff 70%);
+}
+
+/* ----- layout ----- */
+.container{
+  max-width: 1280px;
+  margin: 48px auto 72px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 36px;
+}
+@media (max-width: 1100px){ .container{ grid-template-columns:1fr; } }
+
+/* ----- cards com borda superior em gradiente ----- */
+.card{
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+.card::before{
+  content:"";
+  position:absolute; inset:0 0 auto 0;
+  height:3px; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: linear-gradient(90deg, var(--grad-a), var(--grad-b));
+  opacity:.8;
+}
+
+/* ----- coluna esquerda (hero) ----- */
+.card--hero{ padding: 30px 28px; }
+.chip-row{ display:flex; gap:10px; margin-bottom:14px; }
+.chip{
+  display:inline-grid; place-items:center;
+  width:38px; height:38px; border-radius:10px;
+  background:#0ea5e9; color:#fff; font-weight:900; letter-spacing:.5px;
+  box-shadow: 0 8px 20px rgba(14,165,233,.25);
+}
+.card--hero h2{
+  font-size: 40px; line-height:1.15;
+  margin: 10px 0 8px;
+}
+.lead{ color:#475569; margin:0; font-size: 18px; }
+
+/* ----- coluna direita (form) ----- */
+.card--form{ padding: 28px 28px 26px; }
+.card--form h3{ font-size: 36px; margin: 0 0 18px; }
+
+.field{ margin: 16px 0 14px; }
+.label{ display:block; font-size: 16px; margin: 4px 0 8px; color:#1f2a44; }
+
+/* input com ícone + botão olho (pill + sombra) */
+.ctl{
+  position:relative; display:flex; align-items:center;
+  background:#fff; border:1px solid var(--border);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 rgba(2,6,23,.03),
+    0 18px 40px rgba(2,6,23,.05);
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+.ctl:focus-within{
+  border-color:#cfe0ff;
+  box-shadow:
+    0 0 0 3px rgba(37,99,235,.18),
+    inset 0 1px 0 rgba(2,6,23,.03),
+    0 18px 40px rgba(2,6,23,.06);
+}
+.ctl input{
+  appearance:none; outline:0; border:0; background:transparent;
+  flex:1; padding: 16px 18px 16px 52px; font-size: 16px; color:#0f172a;
+  border-radius: 999px;
+}
+.ctl input::placeholder{ color:#9aa3af }
+.icon{
+  position:absolute; left:16px; display:grid; place-items:center; color:#94a3b8;
+}
+.trail{
+  position:absolute; right:8px; display:grid; place-items:center;
+  width:42px; height:42px; border-radius: 12px;
+  border:1px solid var(--border); background:#fff; cursor:pointer;
+}
+.trail:hover{ background:#f8fafc }
+
+/* botão principal (gradiente verde→azul) */
+.btn{
+  display:block; width:100%;
+  border:0; border-radius: 999px;
+  padding: 16px 20px; font-size: 16px; font-weight: 800;
+  color:#fff; cursor:pointer; user-select:none;
+  background-image: linear-gradient(90deg, var(--grad-a), var(--grad-b));
+  box-shadow: 0 16px 32px rgba(37,99,235,.25);
+  transition: filter .15s ease, transform .05s ease, box-shadow .15s ease;
+  margin-top: 8px;
+}
+.btn:hover{ filter: brightness(1.05); }
+.btn:active{ transform: translateY(1px); }
+.btn:focus-visible{ outline:none; box-shadow: 0 0 0 3px rgba(37,99,235,.22), 0 16px 32px rgba(37,99,235,.25); }
+.btn:disabled{ opacity:.65; cursor:not-allowed; }
+
+/* mensagem de erro/estado */
+.msg{ min-height: 18px; margin-top: 10px; font-size: 14px; color:#64748b }
+.msg.error{ color:#b00020 }
+
+/* divisor + botão “fantasma” */
+.divider{ text-align:center; color:#94a3b8; font-size: 14px; margin: 16px 0; }
+.ghost{
+  display:flex; gap:10px; align-items:center; justify-content:center;
+  width:100%; padding: 16px 18px; border-radius: 999px;
+  color:#0b2447; text-decoration:none; background:#fff;
+  border: 1px solid #d9e2f1; box-shadow: 0 12px 26px rgba(2,6,23,.05);
+}
+.ghost:hover{ background:#f8fafc }
+
+/* responsividade */
+@media (max-width: 760px){
+  .card--hero{ padding: 24px 20px }
+  .card--hero h2{ font-size: 30px }
+  .lead{ font-size: 16px }
+  .card--form{ padding: 22px 18px }
+  .card--form h3{ font-size: 28px }
+  .ctl input{ padding: 14px 14px 14px 48px; }
+}
